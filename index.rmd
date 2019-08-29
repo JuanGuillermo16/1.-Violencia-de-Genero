@@ -1,0 +1,1069 @@
+---
+title: "Using R as a Geographic Information System: Data Models, Feature Representation and Techniques"
+author: ""
+date: "21 de julio de 2019"
+output: html_document
+
+---
+
+
+
+<!-- #### **Chapter 9: Coordinates System** -->
+                
+                
+                
+<!-- #### **Chapter 14: Spatial Interpolation** -->
+
+<!-- #### Given a distribution of point meterological stations showing -->
+<!-- #### precipitation values, how can i estimate the precipitation  -->
+<!-- #### where data were not observed? -->
+
+<!-- #### We need to clearly define the nature of our point dataset  -->
+<!-- #### Here, our point data represent sampled observations of an entity  -->
+<!-- #### that can be measured anywhere within our study area -->
+
+<!-- #### A class of tecniques used with points representing samples of a continous field -->
+<!-- #### are interpolation methods There are many interpolation methods, usually groupped on -->
+<!-- #### deterministic and statistical.  -->
+
+
+ 
+<!-- 0.0 Set global parameters of R Markdown -->
+
+<!-- 0.1 Set global parameters of html document -->
+
+<style>
+body {
+text-align: justify}
+</style>
+
+
+<!-- 0.2 "" "" "" "" code chunks -->
+
+
+```{r include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      
+                       fig.align='center'
+                      
+                      
+                      )
+
+options( stringsAsFactors = FALSE)
+
+## project dir as a Global
+
+rm(list=ls())
+root_wd="C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS"
+
+```
+
+
+ 
+ 
+ 
+ 
+<br>
+<hr>
+
+
+#### **1. Motivation**
+
+<br>
+
+#### Spatial Analysis takes place when a researcher is interested in identify, describe, understand and empirically corroborate patterns that are related to geographic location of some unit of analysis. A Geographic Information System is a multi-component computer environment used to create, manage, visualize and analyze information with spatial content, i.e. is a specialized tool for Spatial Analysis. R studio is an Integrated Development Environment, that is, is a computer environment that provides integrability between programs, information, and a variety of external services facilitating software development. In particular, R studio can be used as and Geographic Information System, combining spatial analysis with R´s capabilities for data manipulation (dplyr), visualization (ggplot) as well as many machine learning and data mining libraries. 
+
+#### In this document, we review some practical and theoretical concerns related to using R studio as a GIS.  First, we review the literature on GIS systems and Spatial Analysis. Then, we develop a practical example in R Studio for a real on-going project. In particular, we develop a typical pipeline of analysis where climate measurements are fed into a interpolation system that executes an interpolation job. The purpose is to get estimates of climate measurements for a rectangular area in department of San Martín Peru.We take a deterministic approach to interpolation task known as inverse distance weighting, This feature engineering technique will become a key component of a Machine Learning systems for the prediction of diseases in rice crops. 
+
+
+
+<br>
+<hr>
+
+
+#### **2. Literature review**
+
+<br>
+
+#### In this section, we review some basic ideas such as the definition of GIS, Feature Representation, programming classes in a GIS, and some practical considerations related to the analysis of spatial information. Our starting point is a clear definition of the main objective of spatial analysis.
+
+<br>
+
+#### (0) The Objective of Spatial Analysis
+
+<br>
+
+
+#### Spatial Analysis takes place when a researcher is interested in identify, describe, understand and empirically corroborate patterns that are related to geographic location of some unit of analysis. A key marker that spatial analysis is required is the requirement of the projection of data in geographical space, instead of any other projection in abstract the feature space. The definition of GIS is a direct implication of this requirement
+
+<br>
+
+#### (1) Geographic Information System
+
+<br>
+
+#### A Geographic Information System is a multi-component computer environment used to create, manage, visualize and analyze information with spatial content. A GIS environment specializes in  storage and retrieval of spatial entities that, unlike structured information (data tables with real-valued or categorical measurements without location), require some special treatment to be adequately retrieved
+
+
+<br>
+
+#### (2) Who use Spatial Analysis?. 
+
+<br>
+
+#### Manuel Gimond makes an interesting classifications of two typical intentions of users of GIS, between accidental geographer and accidental data analyst
+
+<br>
+
+* ####  An **accidental geographer** are those whose understanding of geographic science is base on operations made possible by GIS software.
+
+* ####  An **accidental data analyst** are those whose understanding of data analysis is limited to the point-and-click environment of software such as spreadsheets environments and statistical packages
+
+<br>
+
+
+
+
+#### (3) Feature Representation. 
+
+<br>
+
+#### In order to obtain a deep understanding of GIS, one need to understand how spatial entities are represented in computing environment. Roughly, spatial entities can be represented in (1) vector or (2) raster data model
+
+<br>
+
+#### (3.1) Vector Data Model 
+
+<br>
+
+
+#### A **vector** data model consists in three fundamental geometric primitives: points, lines and polygons.
+
+
+* #### Points are a pure locational representation without length or area (although symbols in a map have both)
+
+* #### Lines or Polylines is a sequence of two or more connected coordinate pairs, called vertices
+
+* #### A polygon is composed of three or more line segments whose starting and coordinate points are identical. This geometric idea embody the idea of inside vs  outside, and are capable of representing the property of area
+
+<br>
+
+
+#### (3.2) Raster Data Model
+
+<br>
+
+#### A **raster** data model uses an array of cells, or pixels, to represent real-world objects. It can be thought as a special case of an area object, where area is divided into a regular grid of cells. Implicit in a raster data model, is a value associated with each cell or pixel, in contrast to a vector data model that may or may not have a real value associated with the geometric primitive.
+
+<br>
+
+#### (3.3) Object vs Field
+
+<br>
+
+#### The Vector vs Raster dichotomy can mask some important properties of spatial entities. An object vs Field view of the world proves to be more insightfull, even though more abstract.
+
+#### An **object** paradigm treats entities as discrete. That is, entities need not to ocurr at every locatin within a study area
+#### Alternatively, a **field** paradigm treats entities a scalar field. That is, an entity could be a quantity that is measurable at any point within a coordinate system. A popular example of a scalar field are surface elevation and temperature
+
+
+<br>
+
+#### (5) Attributes
+
+<br>
+
+#### An attribute is non spatial information (features) unambiguously related to a spatial object. Features are linked to their respective records in spatial databases by the key of the object. Features are stacked into layers.
+
+#### As usual, features can be of various types: Real valued, nominal (categorical without implied order), ordinal (imply specific order), intervals, ratios, and others.
+
+<br>
+
+#### (6) Coordinate Systems
+
+<br>
+
+#### Spatial Analysis has to be explicitly related to spatial reference systems, whether it  is geographic (an earth based reference system) or other arbitrary but clearly defined system.
+
+<br>
+
+#### (7) Shape Files
+
+<br>
+
+
+
+#### At the level of practical considerations, it is important to be aware of some major commercial trends that determinate how specialized GIS software *exchange* information. The **shapefile format** is a popular geospatial vector data format for GIS software, i.e. it’s a particular storage system for spatial information that relies in the **vector data model**. It provides a format for storing both *location* and *attributes* of geometries (points, lines and polygons). This format lacks the capacity to store topological information. The shapefile format was introduced by ESRI with ArcView, a popular software in the early 90´s that was gradually replaced by ArcGIS. Although initially specific to a particular product, it has become a standard for exchange of spatial information between a wide arrays of GIS software. It is used by the majority of repositories  of spatial information, one example being Stanford´s EarthWorks.
+
+
+
+
+
+
+
+
+
+
+<br>
+<hr>
+
+
+#### **3. Work Schedule**
+
+
+<br>
+
+#### Our purpose here is to develop an interpolation model for some measurements taken on climate data. This feature engineering technique will become a key component on a project for forecasting diseases in rice crops. Features such as daily temperature and precipitation were registered during last twenty years by a Weather observation network in the region of San Martin, Peru. The data was provided to us by the client as .txt files. Based on the literature reviewed, we propose the following pipe-line for the interpolation task.
+
+<br>
+
+![](C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS/imgs/3.1.png)
+
+<br>
+
+#### This is mostly, a typical pipeline of information analysis. Yet because of the nature of geographical analysis, there are two distinctive features in this process:
+
+* #### In the feature engineering step, we transform the weather information into a grid data model. This is necessary because most of specialized functions for interpolation in R Studio uses grid data as input as input and output classes as well.
+
+* #### In the modelling step, we incorporate an interpolation worker that executes the interpolation job. The technique preferred is *Inverse Distance Weighting Interpolation*. This approach has clear advantages, like (1) Intuitive, highly- interpretable and easy to explain, (2) desirable statistical properties, and (3) Highly tuneable, a feature that most data-scientist love because it allows to adjust model to desirable behavour.
+
+
+<br>
+<hr>
+
+
+#### **3. Execution**
+
+
+<br>
+
+#### (0, 1) Import & Data wrangling
+
+<br>
+
+#### We load information from and heterogeneous database containing all the information related to the project. The gathering task operated over multiple sources in various format without an single unifying relational database. This approach to storage in data analysis is known as data-lake, and it liberates worktime from ETL´s operations. Initially, all information is standardized to shapefiles format.
+
+<br>
+
+
+```{r, echo=TRUE}
+                
+#### 0.0 Declare WD
+            
+              
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS")
+# list.files()
+
+
+#### 0.1 Loading Data into Global Environment. All the data is initially transformed
+#### to shapefile format.
+
+###  Load First Order peruvian Administrative Divisions 
+
+library(sf)
+library(tmap)
+
+setwd("Peru, First Order Administrative Division")
+dptos_sf=sf::st_read("PER_adm1.shp", quiet=TRUE)
+
+head(dptos_sf, 5) ## display header of sf class object
+
+```
+
+
+```{r, echo=TRUE}
+
+#### 0.2 Load geographical locations of Weather observation stations:
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS")
+plants_location=readxl::read_excel("plantas localizacion.xlsx")
+
+
+#### Standardize data by regular expressions
+
+plants_location$Latitud=
+  
+  stringr::str_replace_all(
+  stringr::str_replace_all(
+    stringr::str_replace_all(
+      plants_location$Latitud,
+      "[[:punct:]]", ""),
+    
+    "[[°]]", "."),
+  
+  " ", "")
+
+plants_location$Longitud=
+  
+  stringr::str_replace_all(
+    stringr::str_replace_all(
+      stringr::str_replace_all(
+        plants_location$Longitud,
+        "[[:punct:]]", ""),
+      
+      "[[°]]", "."),
+    
+    " ", "")
+
+
+plants_location$Latitud=-as.numeric(plants_location$Latitud)
+plants_location$Longitud=-as.numeric(plants_location$Longitud)
+
+
+### (2) Transform to shapefile format
+
+
+### Writting a single Shapefile
+
+plants_sf=
+  sf::st_as_sf(x=plants_location,
+               coords=c("Longitud","Latitud"),
+               crs = 4326,
+               agr = "constant")
+
+
+# plot(plants_sf["Planta Meteorologica"])
+# head(plants_sf)
+# summary(plants_sf)
+
+#### 0.3 Load geographical locations of crop rices:
+
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/Datasets")
+setwd("PLAGAS")
+
+crops_locations=readxl::read_excel("ARROZ.xlsx")
+names(crops_locations)[1]="vegetal_n_comun"
+
+ library(dplyr)
+
+crops_locations= crops_locations %>% dplyr::filter(vegetal_n_comun=="Arroz") 
+crops_locations= crops_locations %>% dplyr::select("latitud","longitud", "area_semb_sem")
+crops_locations=na.omit(crops_locations)
+
+
+### Wisely swap latitude and longitud
+
+for ( c in 1:nrow(crops_locations)){
+  
+  lat=crops_locations$latitud[c]
+  lon=crops_locations$longitud[c]
+  
+  if (lat<lon){
+    
+    crops_locations$latitud[c]=lon
+    crops_locations$longitud[c]=lat
+    
+  }
+}
+
+# hist(crops_locations$latitud)
+# hist(crops_locations$longitud)
+
+## Create "coordinate system agnostic" shapefile
+
+crops_sf=
+  sf::st_as_sf(x=crops_locations,
+               coords=c("longitud","latitud"),
+               ## crs = ,
+               agr = "constant")
+
+# sf::st_crs(crops_sf)
+
+## "Remember" lost coordinate system
+
+crops_sf = sf::st_set_crs(crops_sf, "+proj=utm +zone=18 +south")
+
+## Transforming Coordinate Systems
+
+crops_sf = sf::st_transform(crops_sf, crs=4326)
+
+```
+
+
+<br>
+
+#### (2) Visual Exploratory Data Analysis
+
+<br>
+
+```{r, echo=TRUE, fig.height=8, fig.width=5}
+
+
+#### 2 Plotting all Geometries in a Single Map
+
+#### 2.0 Checking for homogeneity in coordinate System
+
+# layers=list(dptos_sf, plants_sf, crops_sf)
+# lapply(layers, st_crs)
+
+# head(plants_sf)
+# head(dptos_sf)
+
+### 2.1 Plotting al Information !!
+
+library(ggplot2)
+crops_stations_map=
+  
+tmap::tm_shape( ## Initialize new tmap object
+
+  ## First Order Administrative Division Layer
+  
+  dptos_sf,
+               bbox =
+    
+                 ## bounding box (specified as a matrix, 
+                 ## the corresponding coordinates system)
+    
+                 st_bbox(c(xmin = -77.77,
+                           xmax =-75.49,
+
+                           ymin = -8.79,
+                           ymax = -5.38
+                 ),
+                 crs = 4326 ## coordinate system
+                 )
+)+
+  
+  tmap::tm_polygons(col=rgb(0,0,0),
+                    colorNULL=rgb(0,0,0), 
+                    
+                    border.col="white",
+                    alpha=0.1,
+                    thres.poly=0
+  )+
+  
+   ## Weather Observation Network Layer
+  
+  
+  tmap::tm_shape(plants_sf)+
+  tmap::tm_dots(col="firebrick1", size=1.4, alpha=0.3, shape=17)+
+  
+  ## Crops Layer
+
+  tmap::tm_shape(crops_sf)+
+  tmap::tm_dots(col= "#556b2f", size=2, alpha=0.05, shape=15)+
+  
+  ## Layout Settings
+  
+  tmap::tm_layout(title="Rice Crops and Climate Stations in the Department of San Martin (Peru)",
+                  scale=1, title.size = 0.8)+ tmap::tm_format( format="NLD_wide")
+
+
+## save session with map (for final report)
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS/results GIS")
+save(crops_stations_map, file="crops_stations_map.RData")
+
+
+crops_stations_map
+
+```
+
+<br>
+
+####  (2.1) Distribution of Daily Precipitation
+
+<br>
+
+
+```{r, echo=TRUE}
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/Datasets/CLIMA")
+
+stations=list.files(pattern=".txt")
+
+stat_info=list()
+
+### Cargar información de las estaciones metereológicas
+
+for( s in 1:length(stations)){
+
+  stat_info[[ stringr::str_replace(stations[s], ".txt", "") ]]=read.table(stations[s])
+
+}
+
+
+### (1) Checking for consistency in time-stamp of climate data
+
+# hist(unlist(lapply(stat_info, function(x){x["V1"]} )))
+# hist(unlist(lapply(stat_info, function(x){x["V2"]} )))
+# hist(unlist(lapply(stat_info, function(x){x["V3"]} )))
+
+
+
+#### Configurar nombres de Variables Relacionadas con el Tiempo
+
+for (s in 1:length(stat_info)){
+  names(stat_info[[s]])[1:3]=c("año", "mes", "dia")
+}
+
+# lapply(stat_info, dim)
+# lapply(stat_info, names)
+
+#### Filter data to lie in the Evaluation Period
+
+
+for (s in 1:length(stat_info)){
+  
+   data=stat_info[[s]]
+   
+   data = dplyr::filter(data, data$año>2000)
+   
+   stat_info[[s]]=data
+  
+}
+
+
+###  Checking for consistency in Climate Data
+
+
+# loop for removing missings in (v4  precipitation)
+
+for (s in 1:length(stat_info)){
+
+  data=stat_info[[s]]
+
+  data[["V4"]][data[["V4"]]==-99.9]=NA
+
+  data[["precip"]]=data[["V4"]];data[["V4"]]=NULL
+
+  stat_info[[s]]=data
+
+}
+
+climate_data=data.frame(precip=(unlist(lapply(stat_info, function(x){x["precip"]} ))))
+
+library(ggplot2)
+
+
+data_emphasis=function(data, emphasis, min=0, max=.95){
+  
+  ## Filter data to lie between perc min and max of
+  ## emphasized data. Very usefull to plot skewed
+  ## variables
+  
+  ans=
+    dplyr::filter(
+      data,
+      quantile( data[[emphasis]], min, na.rm=TRUE) <= data[[emphasis]] &
+        data[[emphasis]] <=  quantile( data[[emphasis]], max, na.rm=TRUE) )
+  
+  return(ans)
+}
+
+## Plot Distribution of Daily Precipitation
+
+
+precip_plot=
+ggplot(data=data_emphasis(data= climate_data, emphasis="precip", max=.9), aes(x=precip))+
+  
+  geom_histogram(fill=alpha("darkorchid", .3), col="white", bins=40)+
+  
+  theme_light()
+
+
+precip_plot
+
+
+
+
+```
+
+<br>
+
+####  (2.2) Distribution of Daily Temperature
+
+<br>
+
+```{r, echo=TRUE}
+
+## v5 y v6 max y min temperature
+
+# hist(unlist(lapply(stat_info, function(x){x["V5"]} )))
+# hist(unlist(lapply(stat_info, function(x){x["V6"]} )))
+
+
+# loop for removing missings in v5 & v6, 
+# gen mean of daily temp.
+
+
+for (s in 1:length(stat_info)){
+
+  data=stat_info[[s]]
+
+  data[["V5"]][data["V5"]==-99.9]=NA
+  data[["V6"]][data["V6"]==-99.9]=NA
+
+  data$"temp_max"=data[["V5"]];data[["V5"]]=NULL
+  data$"temp_min"=data[["V6"]];data[["V6"]]=NULL
+  data$temp_prom=(data$"temp_max"+ data$"temp_min")/2
+
+  stat_info[[s]]=data
+}
+
+climate_data$temp_max= unlist(lapply(stat_info, function(x){x["temp_max"]} ))
+climate_data$temp_min= unlist(lapply(stat_info, function(x){x["temp_min"]} ))
+climate_data$temp_prom= unlist(lapply(stat_info, function(x){x["temp_prom"]} ))
+
+
+library(tidyr)
+
+
+## Gather takes multiple columns and collapses them into key-value pairs
+
+long_climate_data=dplyr::select(climate_data, temp_max,  temp_min, temp_prom)
+
+long_climate_data=tidyr::gather( data=long_climate_data, 
+                                 key="var",
+                                 value="val",
+                                 temp_max,  temp_min, temp_prom,
+                                 na.rm=TRUE)
+
+
+long_climate_data$var=factor(long_climate_data$var,
+                                levels= c("temp_min", "temp_prom", "temp_max") )
+                                ## (labels= levels)
+                            
+
+## Gráficos de Cajas para Temperaturas Promedio, Máximas y M??nimas
+
+## Inicializamos el gráfico con el comando ggplot, especificando el nombre
+## de la dataset y las variables a relacionar:
+
+
+temp_plot=
+ggplot2::ggplot(data=long_climate_data,   
+                
+                aes( y=val, x=var) )+
+  
+  ## especificación del tipo de gráfica que queremos observar
+  
+  geom_boxplot(outlier.colour = rgb(0,0,0,.001), outlier.size = 4, fill=alpha(c("yellow", "orange", "red"), .2))+ 
+  
+  ## Especificaciones de t??tulo y etiquetado de los ejes:
+  
+  ggtitle("")+
+  
+  ylab("")+
+  
+  xlab("")+
+  
+  ## Colocamos el footnote con el origen de la información
+  
+  labs(caption="Fuente: Datos INEH")+
+  
+  ## Agregamos un tema, es decir, un conjunto de preferencias globales 
+  ## sobre el aspecto del gràfico. Nótese que estos temas se pueden "crear"
+  ## que es el fundamento del punto 3
+  
+  theme_light()+
+  
+  ## Finalmente, trasponemos el gráfico para replicar el enunciado
+  
+  coord_flip()
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS/results GIS")
+save(precip_plot, temp_plot, file="weather_data_plot.RData")
+
+temp_plot
+
+```
+
+<br>
+
+#### (2.3) Time-Covarage of Weather Data
+
+<br>
+
+
+
+```{r, echo=TRUE}
+
+
+climate_data$year= unlist(lapply(stat_info, function(x){x["año"]} ))
+climate_data$month= unlist(lapply(stat_info, function(x){x["mes"]} ))
+climate_data$y_mont= paste(climate_data$year, climate_data$month, sep="-")
+
+
+library(dplyr)
+gr = climate_data %>% group_by(climate_data$y_mont)
+sum= summarise(gr, round(sum((!is.na(temp_prom))/n()*100),2) )
+names(sum)=c("y_month", "p_info")
+
+## Reorder Factors
+
+### Outer: Compute the Outer Product of the Arrays x e Y
+
+sum$y_month=factor(sum$y_month, levels= unlist(as.data.frame(outer(X=1:12, Y=paste(X=2001:2018, "-", sep=""),  function(x,y){paste(y,x, sep="")}) )))
+
+sum$y_month=paste(sum$y_month, "-1", sep="")
+
+sum=dplyr::arrange(sum, sum$y_month)
+
+sum$y_month=as.Date(sum$y_month)
+
+## Plot data availability over time
+
+
+weather_data_coverage=
+ggplot(data=sum, aes(x=y_month, y=p_info))+
+  
+  geom_area(fill=alpha("firebrick1", .3), col="firebrick1", lwd=1, size=2)+
+  
+  scale_x_date(labels = scales::date_format("%Y-%m"), date_breaks="2 years")+
+  
+  theme_light()
+
+## save session with tim coverage (for final report)
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/R Studio as a GIS/results GIS")
+save(weather_data_coverage, file="weather_data_coverage.RData")
+
+weather_data_coverage
+
+
+```
+
+
+
+<br>
+
+#### (3) Feature Engineering: Representation as Grid Data
+
+<br>
+
+#### After checking for integrity of transformed locational and attributed data, we are on our way for the interpolation purpose.  It outputs the interpolated surface, where all the pixels are charged with their estimated value. At the level of implementation within our programming environment, we define a pivot dataframe with pure locational data on coordinates of weather stations. Then, this data is completed with information taken on a particular day. In technological implementations that we reviewed, this attributed data is provided on-demand, when the client requires results (forecast) for a particular day. Nevertheless, specialized functions force us to map spatial information from vector to grid data model. The interpolation worker takes as an input raster data of measurements in a particular day (with the majority of pixels being NULLs).
+
+
+<br>
+```{r }
+
+
+
+### Assigning Location to each station
+
+plants_location$`Planta Meteorologica`=tolower(plants_location$`Planta Meteorologica`)
+names(stat_info)=tolower(names(stat_info))
+
+cor_tab=data.frame(name_1=names(stat_info), name_2="")
+cor_tab$name_2=as.character(cor_tab$name_2)
+
+## Standarizing names of plants location
+
+for(n in 1:length(names(stat_info))){
+
+cor_tab$name_2[n]=
+plants_location$`Planta Meteorologica`[
+which.min(stringdist::stringdist(names(stat_info)[n],  plants_location$`Planta Meteorologica`))
+]
+}
+
+## Correct names in info list
+
+for (n in 1:nrow(cor_tab)){
+  names(stat_info)[n]=cor_tab$name_2[n]
+}
+
+ ## Define plants_2 as a pivot table of pure locational information
+ ## without atributes. Program recycles this asset to complete
+ ## with daily information
+
+plants_location2=dplyr::select(plants_location,
+                               c("Planta Meteorologica",
+                                 "Latitud",
+                                 "Longitud"));names(plants_location2)[1]="stat"
+
+### Writting a (pivot) Shapefile
+
+plants_sf2=
+  sf::st_as_sf(x=plants_location2,
+               coords=c("Longitud","Latitud"),
+               crs = 4326,
+               agr = "constant")
+```
+
+
+
+```{r, echo=TRUE}
+
+## generate an attributed dataframe from client requirements
+## and pivot shapefile on location data
+
+## Set temporal coordinates to the grid to be returned.
+## These are properly, client specifications
+
+year=2010
+month=5
+day=16
+
+ day_data=
+ lapply(stat_info,
+
+        function(x){
+
+         x= x %>% dplyr::filter( año %in% year & mes %in% month & dia %in% day)
+
+        })
+
+
+ ## Compress to Data Frame
+
+ day_data=Reduce(x=day_data, f=function(x,y){rbind(x,y)}, right = FALSE)
+ day_data$stat=names(stat_info)
+
+
+ ## Append to plant location (generate attributed df)
+
+ day_data=dplyr::left_join(plants_sf2, day_data, by="stat")
+
+ 
+ library(ggplot2)
+crops_stations_map=
+  
+tmap::tm_shape( ## Initialize new tmap object
+
+  ## First Order Administrative Division Layer
+  
+  dptos_sf,
+               bbox =
+    
+                 ## bounding box (specified as a matrix, 
+                 ## the corresponding coordinates system)
+    
+                 st_bbox(c(xmin = -77.77,
+                           xmax =-75.49,
+
+                           ymin = -8.79,
+                           ymax = -5.38
+                 ),
+                 crs = 4326 ## coordinate system
+                 )
+)+
+  
+  tmap::tm_polygons(col=rgb(0,0,0),
+                    colorNULL=rgb(0,0,0), 
+                    
+                    border.col="white",
+                    alpha=0.1,
+                    thres.poly=0
+  )+
+  
+   ## Weather Observation Network Layer
+  
+  
+  tmap::tm_shape(plants_sf)+
+  tmap::tm_dots(col="firebrick1", size=1.4, alpha=0.3, shape=17)+
+  
+  tmap::tm_shape(day_data)+
+  tmap::tm_text(text="temp_max")+
+
+  ## Layout Settings
+  
+  tmap::tm_layout(title="Measurements Taken on a Particular Day",
+                  scale=1, title.size = 0.8)+ tmap::tm_format( format="NLD_wide")
+
+crops_stations_map
+
+
+# setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/Nuts and Bolts of Using R Studio as an interface to Apache Spark")
+# save(day_data, file="day_data.RData")
+ 
+```
+
+
+<br>
+
+#### (4) Interpolation Job: Inverse Distance Weighting
+
+<br>
+
+#### Inverse Distance Weighting is a operationalization on Tobler’s first law of geography:
+<br>
+
+<h4><u>  “everything is related to everything else, but near things are more related than distant things” </h4></u> 
+
+<br>
+
+#### Consider the following estimation formula
+
+
+
+$$ \hat{Z}_{j}=\frac{\sum_{i}^{N}{\frac{{Z}_{i}}{d_{i,j}^p} }}{\sum_{i}^{N}{\frac{1}{d_{i,j}^p} }}$$
+
+
+
+
+```{r, echo=TRUE, results="hide"}
+
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/2. Calidad del Arroz/Nuts and Bolts of Using R Studio as an interface to Apache Spark")
+load("day_data.RData")
+
+
+## (0) Isolate polygon with estimation area
+
+martin_sf= dptos_sf %>% dplyr::filter(NAME_1=="San Martín")
+martin_sp=sf::as_Spatial(martin_sf)
+martin_sp@bbox
+
+
+## (1) Day data to Spatial object class
+
+# https://gis.stackexchange.com/questions/239118/r-convert-sf-object-back-to-spatialpolygonsdataframe
+
+day_data$temp_prom[is.na(day_data$temp_prom)]=mean(day_data$temp_prom, na.rm=TRUE)
+day_data_sp=sf::as_Spatial(day_data)
+
+
+## (2) Initialize Empty grid (template) over estimation area
+
+library(sp)
+library(gstat)
+library(xts)
+
+# https://www.cdrc.ac.uk/wp-content/uploads/2016/11/Practical_11.html
+
+
+template_grid= as.data.frame(sp::spsample(martin_sp, type = 'regular', n = 10000))
+
+names(template_grid)       = c("X", "Y")
+coordinates(template_grid) = c("X", "Y")
+gridded(template_grid)     = TRUE  # Create SpatialPixel object
+fullgrid(template_grid)    = TRUE  # Create SpatialGrid object
+proj4string(template_grid) = proj4string(day_data_sp)
+
+
+## (3) Interpolation by IDW
+
+idp_grid=c(2,10)
+par(mfrow=c(ceiling(length(idp_grid)*0.5), 2))
+
+
+for(p in 1:length(idp_grid)){
+
+
+idw_mod = idw(temp_prom ~ 1,
+           day_data_sp,
+           newdata= template_grid,
+           idp=idp_grid[p])
+
+
+## Coerce to raster format
+idw_mod=raster::raster(idw_mod)
+
+
+
+## (4) Masking a rastet
+
+masked_idw_mod=raster::mask(idw_mod, martin_sp)
+plot(masked_idw_mod, main=sprintf("IDP=%s",idp_grid[p] ))
+
+}
+
+```
+
+
+<br>
+
+#### (5) Calibration Loop
+
+<br>
+
+#### Following Grimmond, for calibration we define a evaluation protocol based on *RMSE* as our performance metric and *Leave-One-Out-Cross-Validation* as our resampling method. Therefore we avoid the pitfall of evaluating performance on same data used for training.
+
+
+
+```{r, echo=TRUE, results="hide"}
+
+## Leave-one-out Cross Validation Loop:
+
+## Declare a grid for complexity Parameter
+
+theta_grid=seq( from=0.0, to=2.0, length.out = 30)
+eval_table=data.frame(theta_grid=theta_grid, rmse=NA)
+
+for(t in 1:length(eval_table$theta_grid)){
+
+## Loop over theta_grid
+
+y_hat=
+sapply(
+  
+  as.list(1:nrow(day_data_sp)),
+  
+  function(r){
+  idw(temp_prom ~ 1, day_data_sp[-r,], day_data_sp[r,],idp = eval_table$theta_grid[t])$var1.pred}
+  
+)
+
+eval_table$rmse[t]=Metrics::rmse(actual=day_data_sp$temp_prom, predicted=y_hat)
+
+}
+
+
+ggplot(data=eval_table, aes(x=theta_grid, y=rmse))+
+  
+  geom_point(col=rgb(0,0,0,.2), size=4)+
+  geom_line(col=rgb(0,0,0,.2), lty=2)+
+  theme_light()
+
+```
+
+
+
+<br>
+
+#### (4) Modelling: Inverse Distance Weighting Interpolation
+
+
+
+
+<br>
+
+```{r call references} 
+
+## (replicable over multiple documents)
+
+## install.packages("readtext")
+
+setwd(root_wd)
+
+ref=readtext::readtext(file="ref.docx" ## (to word document)
+                          )
+
+ref=stringr::str_split(ref$text, pattern="BIBLIOGRAPHY" )[[1]][2]
+
+ref=data.frame( "References"=unlist(stringr::str_split( ref, pattern="\n" )))
+
+
+## Render Bibliography in HTML
+
+library(dplyr)
+knitr::kable(x=ref, format = "html") %>% kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+ 
+
+```
+
+
+
+
+
+<!--  #### 2.0 Finding Interpolating Surface -->
+
+
+<!--  ## Create an empty grid, where n is the total number -->
+<!--  ## of cells -->
+
+
+<!-- View(plants_location) -->
+
+<!-- ## Rerences -->
+
+<!-- # https://es.wikipedia.org/wiki/Shapefile -->
+<!-- # https://earthworks.stanford.edu/search_history -->
+<!-- # https://mgimond.github.io/Spatial/coordinate-systems-in-r.html -->
+<!-- # https://proj.org/operations/projections/utm.html -->
+  
+
