@@ -1,0 +1,1015 @@
+---
+title: "Predicción de Violencia Física Contra la Mujer en el Perú; Un enfoque de Big Data y Aprendizaje de Máquinas"
+author: "Nemías Seboya Ríos, Juan Guillermo Osío Jaramillo"
+date: "23 de junio de 2019"
+output: pdf_document
+---
+
+
+<!-- 0.0 Set global parameters of R Markdown -->
+
+<!-- 0.1 Set global parameters of html document -->
+
+<style>
+body {
+text-align: justify}
+</style>
+
+
+<!-- 0.2 "" "" "" "" code chunks -->
+
+
+```{r include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align = "center")
+
+options( stringsAsFactors = TRUE)
+
+## project dir as a Global
+
+rm(list=ls())  
+root_wd=""
+
+```
+ 
+
+<br>
+<hr>
+
+#### **Motivación General**
+
+<br>
+
+#### La violencia contra la mujer es la que se ejerce por su condición de mujer, siendo esta consecuencia de la discriminación que sufre tanto en las leyes como en la práctica, y de la persistencia de las desigualdades por razones de género. Esta violencia tiene un amplio espectro de expresión, que incluye desde el menosprecio, hasta la agresión física o psicológica y el asesinato. Entre 2010 y 2017, 837 mujeres fueron asesinadas y 1172 intentos de asesinato fueron llevados a cabo en el Perú. El Instituto Nacional de Estadística e Informática de dicho país emplea un concepto de violencia física cuya incidencia sobre la población femenina se colocaba en 32.3% para el año 2014. El promedio de la misma estadística podría situarse en 35.92% en los últimos 10 años.
+
+#### Por otra parte, la entonces Ministra para la Mujer y Poblaciones Vulnerables Ana María Mendieta expresaba en junio de 2018 que 
+
+<br>
+
+<div align="justify">
+
+<p><u><h4>
+
+"Las cifras nos demuestran que nuestra sociedad aún está influida por el machismo, que impone ejercicio de poder por parte de los hombres sobre las mujeres. Esta concepción machista es la que justifica y reproduce la violencia familiar y sexual de la que somos testigos diariamiente, y que constituye un riesgo para el bienestar y la vida de las mujeres"
+
+<h4></u></p>
+
+</div>
+
+<br>
+
+#### Un aspecto notable  de la violencia contra la mujer es que suele ajustarse a patrones sociales muy específicos y por lo tanto, su ocurrencia suele estar acompañada tanto de factores de riesgo (edad, pertenencia a minorías étnicas y clases económicas desfavorecidas, bajos niveles de educación) como de informaciones preliminares  que anuncian una alta probabilidad  del evento (historias de abuso familiar, ser víctima de varias agresiones por parte de familiares y actores en el entorno, etc.). La existencia de esta fuerte estructura de determinaciones entre características individuales y que una mujer sea víctima de violencia de género sugiere la factibilidad de elaborar una estimación sobre la probabilidad de ocurrencia de este evento, lo cual facilitaría la focalización de una política pública por medio de identificación de poblaciones vulnerables.
+
+#### En este documento, reportamos los resultados de haber prestado una asesoría técnica a un docente investigador que desarrolla un sistema predictivo para la ocurrencia de violencia física contra la mujer peruana. Describimos el nivel de desarrollo del proyecto que se nos proporciona, nuestro diagnóstico y la recomendación e implementación que aportamos al proyecto.
+
+<br>
+<hr>
+
+<br>
+
+#### **1. Presentación del Material del Proyecto**
+
+<br>
+
+```{r , include=FALSE}
+
+
+rm(list=ls())
+root_wd="C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género"
+
+setwd(root_wd)
+setwd("data")
+
+list.files()
+ine_data=read.csv("ine all metadata.csv", header = TRUE)
+
+dim(ine_data)
+
+labels=c(
+  
+  "grupo_edad",
+  
+  "región",
+  
+  "tipo_residencia",
+  "tipo_lugar_crianza",
+  
+  "etnicidad",
+  "n_miembros_hogar",
+  
+  "educ",
+  "nivel_alfa",
+  
+  "ind_riqueza",
+  
+  "maltrato_padres",
+  
+  "maltrato_fam",
+  
+  "maltrato_padrastros",
+  
+  "matrato_otro",
+  
+  "maltrato_padre_a_madre",
+  
+  "PhisV"
+  
+)
+
+dim(ine_data)
+length(labels)
+
+names(ine_data)=labels
+
+```
+
+#### Para el propósito de esta asesoría nos fue proporcionado un material de proyecto que abarca; (1) La base de datos utilizada, (2) Un script de trabajo en formato de *Jupiter Notebook* que contiene el desarrollo de un sistema de predicción basado en algoritmos de Machine Learning. A continuación, presentamos el material proporcionado:
+
+<br>
+
+#### 1.1 Presentación de los Datos Proporcionados
+
+<br>
+
+#### Nos fue otorgada una data-set basada en el funcionamiento durante una más de década de una operación estadística del *Instituto Nacional de Estadística e Informática* del Perú. Por lo tanto la base de datos que recibimos tiene un poco más 200000 registros de mujeres peruanas con la siguiente información:
+
+<br>
+
+
+* #### Variables que describen el entorno material y cultural que habita el sujeto: Como la **región**, el **tipo de residencia** y el **tipo de lugar de crianza**
+
+* #### Variables que denotan el Perfil Sociodemográfico del individuo:  como **grupo de edad**, la **etnicidad** y el **número de miembros del hogar**
+
+* #### Niveles de Educación del Individuo: En términos de **nivel educativo más alto alcanzado** y **grado de alfabetización**
+
+* #### Situación Económica del Individuo, medida por medio del **Índice de Riqueza** metodología INE.
+
+* #### **Variables que informan sobre el maltrato físico por parte de diferentes actores en el entorno**: Como los padres, otros familiares y agentes externos a la familia.
+
+* #### Una variable binaria que de identifica si la mujer **recibió o no maltrato físico**
+
+<br>
+
+
+#### 1.2  Análisis Exploratorio de Variables
+ 
+<br>
+ 
+#### (1) Tasa de Mujeres Afectadas por Violencia
+
+<br>
+
+#### En primer lugar, presentamos nuestra estimación de la cantidad de mujeres que han sido víctimas de violencia física, según el concepto manejado por el INEI
+
+<br>
+ 
+```{r , include=TRUE, eval=TRUE}
+
+ine_data$lab_response=ifelse(ine_data$PhisV==1, "Sí", "No")
+  
+ print(paste("%", sprintf(
+   " de Mujeres que han recibido  Violencia Física: %s",
+  round(                    
+  (sum(ine_data$PhisV==1))/nrow(ine_data)*100, 2)), sep=""))
+                        
+
+```
+ 
+ <br>
+ 
+#### Es decir, que la probabilidad de que la mujer típica peruana sea agredida se ha mantenido en niveles próximos al 36% durante los últimos 10 años. Esto es una estimación de probabilidad incondicional, que todavía no incorpora el potencial de *profiling* representado por la base de datos
+
+
+<br>
+ 
+#### (2) Distribución por Grupos de Edad
+
+<br>
+ 
+#### En cuanto a la distribución de la violencia por grupos de edad, encontramos el patrón representado en la siguiente gráfica:
+<br>
+
+
+```{r , fig.align='center'}
+
+### Resource: How to Create Stacked Histograms in R studio with GGplot
+#### https://www.datanovia.com/en/blog/how-to-create-a-ggplot-stacked-bar-chart-2/
+
+#### Según el procedimiento en este artículo, debe construirse una tabla de meta-información
+#### con variables agregadas a nivel todos los factores por los cuáles se desea desagregar
+
+
+## Exploratory Analysis (1)
+
+library(dplyr)
+library(ggplot2)
+
+gr= ine_data %>% group_by(ine_data$grupo_edad, ine_data$PhisV)
+
+sum_t= as.data.frame(summarise(gr, "n"= n() ))
+
+names(sum_t)[1:2]=c("grupo_edad", "v_rate")
+sum_t$"Victima"=factor(sum_t$v_rate, levels=c(0,1), labels=c( "no", "sí"))
+
+
+gr2= ine_data %>% group_by(ine_data$grupo_edad)
+
+sum_t2= as.data.frame(summarise(gr2, "rate"=mean(PhisV), "n"= n() ))
+
+names(sum_t2)[1:2]=c("grupo_edad", "v_rate")
+
+ggplot(data=sum_t, aes(x=grupo_edad, y=n))+
+         
+         geom_col( aes(fill=Victima), width = 0.7)+
+  
+  geom_text( data=sum_t2,
+             aes(x =sum_t2$grupo_edad,
+                y= (sum_t2$v_rate*sum_t2$n)/2),
+            label = paste(round(sum_t2$v_rate*100,2), "%"),
+            color = "black")+
+         
+         ggtitle("Tasa de Violencia por Grupos de Edad")+
+  
+         xlab("Grupo de Edad (categoría)")+
+         ylab("# de Mujeres")+
+  
+  scale_fill_manual(values = c(ggplot2::alpha("darkorchid", .3), "darkorchid") )+
+  
+  theme_light()
+  
+
+```
+ 
+<br>
+
+#### Se aprecia un incremento sostenido de la tasa de violencia cada grupo de edad. La interpretación de esto podía ser que el mayor rechazo a las diferentes formas de violencia por parte de las nuevas generaciones (efecto cultura) estaría sobrecompensando la indefensión relativa de las mujeres comparativamente  más jóvenes (efecto vulnerabilidad). Otra explicación podría ser que  las mujeres van acumulando el riesgo de ser agredidas por lo menos una vez en la vida a medida que transcurre su ciclo vitalicio; Es decir,  a más años, más experiencias que pudieron haber derivado en maltrato (por ejemplo, relaciones con distintas parejas, etc.).
+ 
+<br>
+ 
+#### (3) Distribución por Departamentos
+
+<br>
+ 
+#### En cuanto a la distribución de la violencia por departamentos, se pudo encontrar el patrón de agregación geográfica representado a continuación:
+
+<br>
+
+```{r echo=FALSE, fig.align='center'}
+  
+
+## Exploratory Analysis (2)
+
+library(dplyr)
+library(ggplot2)
+
+
+gr= ine_data %>% group_by(ine_data$"región")
+
+sum_r= summarise(gr, "v_rate"= mean(PhisV, na.rm=TRUE))
+names(sum_r)[1]="region"
+
+sum_r=as.data.frame(dplyr::arrange(sum_r, (v_rate)*(-1) ))
+row.names(sum_r)=sum_r$region
+
+## Crear degradación del púrpura en blanco, con longitud igual al número
+## de regiones en el Perú
+
+col=  seq(from=.9, to=.3, length.out =length(sum_r$v_rate) )
+col=  sapply( as.list(col), function(x){ ggplot2::alpha("darkorchid", x)  }  )
+
+
+barplot(
+  
+    
+    ## Argumento (vector numérico) a graficar con barras:
+    
+    height=round(sum_r$v_rate*100,2),
+    
+    ## Tìtulo y nombre de los Ejes
+    
+    main="Tasa de Violencia por Región",
+    ylab="% Mujeres",
+    
+    ## Crear escala de Colores:
+    
+    col=col,
+    
+    ## Nombre de las Barras:
+    
+    names.arg=sum_r$region,
+    
+    ## Otras preferencias: Bordeado de las barras, tamaño de la letra:
+    
+    border="white", 
+    las=2, 
+    cex.axis=.7,
+    cex.names=.7
+  
+    )
+
+```
+
+<br>
+ 
+#### Que permite corroborar la intuición de que la violencia está concentrada geográficamente. Algunos departamentos presentan tasas de violencia  superiores al promedio nacional hasta en 10 puntos porcentuales.
+
+<br>
+ 
+#### (4) Distribución por Niveles de Riqueza
+
+<br>
+ 
+#### El INEI maneja una medida categórica de niveles de riqueza basada en 5 niveles sucesivos, donde 5 representa el mejor perfil económico del sujeto. Hallamos el siguiente patrón de la violencia por niveles de riqueza:
+
+<br>
+
+
+```{r , fig.align='center'}
+  
+
+## Exploratory Analysis (3)
+
+
+library(dplyr)
+library(ggplot2)
+
+library(dplyr)
+library(ggplot2)
+
+gr= ine_data %>% group_by(ine_data$ind_riqueza, ine_data$PhisV)
+
+sum_t= as.data.frame(summarise(gr, "n"= n() ))
+
+names(sum_t)[1:2]=c("nivel_riqueza", "v_rate")
+sum_t$"Victima"=factor(sum_t$v_rate, levels=c(0,1), labels=c( "no", "sí"))
+
+
+gr2= ine_data %>% group_by(ine_data$ind_riqueza)
+sum_t2= as.data.frame(summarise(gr2, "rate"=mean(PhisV), "n"= n() ))
+
+
+names(sum_t2)[1:2]=c("nivel_riqueza", "v_rate")
+
+ggplot(data=sum_t, aes(x=nivel_riqueza, y=n))+
+         
+         geom_col( aes(fill=Victima), width = 0.7 )+
+  
+  geom_text( data=sum_t2,
+             aes(x =sum_t2$nivel_riqueza,
+                y= (sum_t2$v_rate*sum_t2$n)/2),
+            label = round(sum_t2$v_rate*100,2),
+            color = "black")+
+         
+         ggtitle("Tasa de Violencia por Nivel de Riqueza")+
+  
+         xlab("Nivel de Riqueza")+
+         ylab("# de Mujeres")+
+  
+  scale_fill_manual(values = c(ggplot2::alpha("darkorchid", .3), "darkorchid") )+
+  
+  theme_light()
+  
+
+```
+
+<br>
+ 
+#### Interesantemente, la tasa de violencia no se comporta de forma estrictamente decreciente con la riqueza de los individuos. De hecho, la misma se incrementa hasta alcanzar un máximo global en el tercer nivel de riqueza (39.41%) para luego descender al mínimo global en el último nivel de riqueza. Esto sugiere que solo un nivel de riqueza extremadamente alto se convierte en un factor que contrarresta la violencia de género.
+
+<br>
+
+ 
+#### (5) Correlación entre las diferentes formas de Violencia
+
+<br>
+ 
+#### Finalmente, proponemos la siguiente representación visual (mapa de calor) de las correlaciones que existen entre diferentes formas de violencia.
+
+<br>
+
+ 
+```{r , include=TRUE, eval=TRUE}
+
+## Exploratory Analysis (4)
+
+
+ine_data0=dplyr::sample_frac(tbl=ine_data, .2)
+
+ine_data0= ine_data0 %>% dplyr::select("PhisV",  c(grep(names(ine_data0), pattern="trato", value=TRUE)) )
+
+## plot a correlation matrix in R studio
+
+## http://jaehongshin.blogspot.com/2014/10/r-heatmap-correlation-matrix.markdown
+
+## Crear degradación de tamaño 100 del color púrpura
+
+col=  seq(from=0, to=1, length.out =100 )
+col=  sapply( as.list(col), function(x){ ggplot2::alpha("darkorchid", x)  }  )
+              
+
+mat=cor(ine_data0, use="pairwise.complete.obs")
+
+pheatmap::pheatmap(mat=mat, col=col, cluster_rows=FALSE, cluster_cols=FALSE)
+
+```
+
+
+<br>
+
+#### 1.3 Presentación del Código Proporcionado
+
+<br>
+ 
+#### Nuestro cliente  desarrolló un sistema de predicción basado en algoritmos de Machine Learning, pero desea mejorar su funcionamiento a través del consejo de un experto. La solución implementada por nuestro cliente se nos proporcionó en el formato de un ***jupyter notebook*** en lenguaje de programación **Phyton**. El documento hace uso de las librerías de que describimos a continuación (si no está interesado, saltar a nuestro diagnóstico).
+
+ <br>
+ 
+#### Uso de Librerías
+ 
+ 
+ * #### **numpy**:
+ * #### **pandas**:
+ * #### **matplotlib**:
+ * #### **seaborn**:
+ * #### **graphviz**:
+ * #### **scikit learn**:
+ 
+ <br>
+ 
+#### Workflow
+
+#### A partir del código proporcionado, se identificò que la solución implementada por el cliente correspondía a al siguiente diseño del pipe-line de Machine-Learning. El código de transparencias de color en la imagen prentende enfatizar el hecho de que el cliente omitiò algunas instancias que nosotros consideramos reelevantes en el diseño ideal/óptimo del pipeline de machine learning.
+
+<br>
+
+![](C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/1.3.1.png)
+
+<br>
+ 
+#### **2. Diagnóstico de la solución Implementada:**
+
+<br>
+
+#### Nosotros evaluamos el esquema de trabajo diseñado por nuestro cliente, e identificamos los siguientes puntos en los que se puede ofrecer un valor agregado:
+
+* #### **Feature Engineering**: En el ejercicio no hay una estrategia explícita de ingeniería de variables. Se asume que la mejor representación del sistema estudiado está en el espacio de los datos directamente observados (raw data). Se fuerza la representación numérica de las variables, pero esto genera que las variables nominales sin ordenamiento natural no aporten poder de predicción al modelo (e.g. la región en la que se localiza la observación). Esto genera que el modelo desperdicie **insights predictivos** que provienen de la distribución geográfica de la violencia contra la mujer, y la incidencia de factores de riesgo como la etnicidad y el tipo de lugar de crianza.
+
+* #### **Model Calibration:** El ejercicio carece de una estrategia explícita de calibración del modelo. Por lo tanto, no se garantiza que se identifique el modelo con el nivel de complejidad óptimo, con el mejor balance entre eficiencia estadística y precisión de la representación
+
+* #### **Model Evaluation:** No se justifica la elección de la métrica de desempeño del modelo. Por lo tanto, la evaluación del modelo no está ponderando los costos de cada tipo de error. En este caso, un gran esfuerzo de modelación debería invertirse mejorar el **recall** del modelo sobre las etiquetas positivas. Esta medida representa la proporción de la población maltratada físicamente que es identificada por nuestro modelo. Esto permite generar una política pública con amplia cobertura sobre las mujeres maltratadas que mitigue los altos costos (en bienestar social) de la violencia de género.
+
+* #### **Algorithms Performance:** Aunque se emplean algoritmos de high-performance, no se consideran las generalizaciones y extensiones de los mismos que típicamente obtienen mejor poder predictivo. 
+
+
+<br>
+ 
+#### 2.2 Nuestro Plan de Trabajo:
+
+<br>
+
+#### En base a las consideraciones planteadas en nuestro diagnóstico anterior, presentamos nuestra plan de trabajo, como la extensión del esquema del pipe-line de ML planteado por nuesto cliente:
+
+<br>
+
+![](C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/2.4.1.png)
+
+
+<br>
+
+#### En particular, nuestro plan de trabajo respeta en términos generales la solución del cliente, pero propone las siguientes innovaciones:
+
+* #### En términos de **ingeniería de variables**, se implementa la representación de **one-hot-enconding**  de las variables categóricas sin ordenamiento natural. Esta estrategia consiste en que una variable categórica con una cantidad finita de K categorías se representa por K bits de información. Es decir, a cada observación se le asigna un vector k-dimensional de variables indicador, donde la única clase activa (que toma el valor de 1) es la que corresponde a la categoría a la que pertenece la observación. Esto se repite para todas las variables categóricas no ordinales. Como consecuencia de esta estrategia, el tamaño del **feature space** se incrementa considerablemente, lo cual no necesariamente deteriora el desempeño estadístico pues se emplean algoritmos especializados de minería de datos. En cambio, dicha representación  si permite derivar poder discriminatorio de variables como la región, etnicidad y tipo de lugar de crianza.  
+
+* ####  Por otra parte, el punto anterior si puede  agravar el coste computacional (en tiempo y memoria), el cual escala rápidamente debido a la cantidad masiva de observaciones. Para relajar esta restricción, se propone incorporar el tiempo como predictor y restringir el entrenamiento a una ventana de estimación de cierto tamaño alrededor de una observación de referencia. Al hacer esto, se puede perder cierta eficiencia estadística pero también se gana precisión en la representación, pues observaciones que son más próximas temporalmente pueden ser más similares entre sí. Los esencial es que esto nos permite alcanzar un compromiso entre el tamaño de la representación y el tiempo de entrenamiento.
+
+* ####  En términos de **modelación**, se propone emplear la técnica de Gradient Boosting, un algoritmo de aprendizaje supervisado que se basa en construir de forma secuencial, un conjunto de modelos individualmente débiles. Esta estrategia empírica se explica con detalle en la sección de modelación del documento.
+
+* ####  Para la **calibración** se proporciona al cliente una visualización del desempeño en el conjunto de evaluación de  50 modelos con diferentes asignaciones de parámetros. La visualización se genera sobre el espacio de *recall vs precisión*, lo cual permite al *policy-maker* racionalizar el desempeño de modelo como si fueran características de una política pública en etapa de diseño.
+
+
+<br>
+
+
+
+
+<br>
+<hr>
+
+#### **3. Desarrollo del Plan de Trabajo **
+
+<br>
+
+#### Puesto que el cliente nos entrega una base de datos limpia y estandarizada, presentamos el desarrollo de nuesto plan de trabajopara los pasos (2 a 5)
+
+
+<br>
+
+#### 3.2 Feature Engineering:
+
+<br>
+
+#### El siguiente bloque de código contiene la transformación de las variables categóricas que se justificó en el planteamiento del plan de trabajo.
+
+<br>
+
+
+```{r, echo=TRUE }
+  
+
+## (2) Block Wise Feature Enginering
+
+num_var=c(
+  ## Mediciones numéricas y Categóricas Ordinales
+  
+  "grupo_edad",
+  "n_miembros_hogar", 
+  "educ",
+  "nivel_alfa", 
+  "ind_riqueza",
+  
+  ## Variables dicótomas que identifican diferentes fuentes
+  ## de maltrato
+  
+  "maltrato_padres", 
+  "maltrato_fam",
+  "maltrato_padrastros",
+  "matrato_otro",    
+  "maltrato_padre_a_madre")
+
+
+## Porción de la información en var numéricas:
+
+num_info=dplyr::select(ine_data, num_var )
+
+
+## Aislar porción de la información en variables categóricas
+
+non_num=setdiff(names(ine_data), num_var)
+
+cat_var=c("región",
+          "tipo_residencia",
+          "tipo_lugar_crianza",
+          "etnicidad")
+
+cat_info=dplyr::select(ine_data, cat_var)
+
+head(cat_info)
+
+
+## One hot Encoding Representation of Categorical Information
+
+cat_info2=lapply(cat_info, function(x){ ans=dummies::dummy(x, sep="_")})
+
+
+
+for (l in 1:length(cat_info2)){
+  
+  colnames(cat_info2[[l]])=
+    
+    paste0(names(cat_info2)[l], 1:ncol(cat_info2[[l]])  )
+}
+
+
+
+# lapply(cat_info, function(x){length(table(x))})
+# lapply(cat_info2, ncol)
+# lapply(cat_info2, nrow)
+
+# cat_info2=mapply(function, ...)
+#   
+## Reduce is one of Common Higher-Order Functions in Functional Programming Languages
+
+cat_info3=as.data.frame(Reduce(f=function(x,y){cbind(x,y)}, x=cat_info2))
+
+## Construir tabla contacta con toda la información procesada
+
+feature_matrix=cbind(num_info, cat_info3)
+
+## Diferencia en cantidad de Variables y tamaño de los objetos
+
+ncol(feature_matrix)-ncol(ine_data)
+object.size(feature_matrix)-object.size(ine_data)
+
+
+```
+
+<br>
+
+#### La representación como *one-hot-encoding* consiste  en 38 columnas adicionales que implican 31398064 bytes en el tamaño de la base de datos. La segunda representación puede ser especialmente problemática para algoritmos que hacen varios escaneos sobre la base de datos. El siguiente bloque de código se refiere nuestra estrategia de retringir la ventana de entrenamiento:
+
+<br>
+
+```{r, echo=TRUE, eval=FALSE}
+
+### Conformar única base de datos con toda la información ya transformada:
+
+# all_train_data=cbind(feature_matrix, train_lab=ine_data$lab_response)
+# all_train_data$time_index=as.numeric(row.names(all_train_data))
+# 
+# 
+# ## Escogemos el radio de la ventana de estimación, como proporción del tamaño de la muestra
+# 
+# window_size=0.2
+# 
+# ## Delimitamos a las observaciones que tienen suficiente información
+# 
+# feasible_window=
+#   round(c(
+#     window_size*nrow(all_train_data)+1,
+#     nrow(all_train_data)-window_size*nrow(all_train_data)
+#   ))
+# 
+# ## Escogemos de forma aleatoria una única observación dentro del conjunto
+# ## factible
+# 
+# 
+# eval_time=
+#   sample(feasible_window[1]:feasible_window[2], size=1)
+# 
+# ## Determinamos una ventana de estimación alrededor de esta observación
+# 
+# eval_window= c(floor(eval_time-window_size*nrow(all_train_data)),
+#                 floor(eval_time+window_size*nrow(all_train_data)))
+# 
+# 
+# ## Restringimos los datos a una ventana de (window_size*100)% de la cantidad de observaciones antes y después de una observación de referencia
+# 
+# effective_train_data=dplyr::filter(all_train_data, time_index %in%  eval_window[1]:eval_window[2])
+# 
+# 
+# ## Corremos una lotería para identificar las Observaciones en Entrenamiento, Validación  y Prueba
+# 
+# rows=1:nrow(effective_train_data)
+# 
+# training_index=sample( rows , 0.4*nrow(effective_train_data))
+# 
+# without_training= rows[!(rows %in% training_index)]
+# 
+# validation_index=sample( without_training, 0.4*nrow(effective_train_data))
+# 
+# test_index= rows[!(rows %in% training_index) & !(rows %in% validation_index) ]
+# 
+# intersect(union(training_index, validation_index), test_index)
+# 
+# 
+# ## Declarar data entrenamiento
+# 
+# train_data0=effective_train_data[training_index, ]
+# val_data0=effective_train_data[validation_index,]
+# test_data0=effective_train_data[test_index, ]
+# 
+# 
+# 
+# 
+# 
+# ## Area Plot with National Average
+# 
+# all_train_data$in_sample=all_train_data$time_index %in% eval_window[1]:eval_window[2]
+# 
+# 
+# library(ggplot2)
+# 
+# setwd(root_wd);setwd("imgs")
+# 
+# png(file="sample plot.png")
+# ggplot(all_train_data, aes(x =time_index , y = time_index))+
+# 
+#   ggtitle("")+
+#   ylab("")+
+#   xlab("")+
+# 
+#   geom_line(col="firebrick", fill=alpha("firebrick", .3), size = 1)+
+#   geom_vline(xintercept = feasible_window , col="black", lty=2)+
+#   geom_vline(xintercept = eval_time, col="darkorchid", lty=2)+
+# 
+#   geom_area(aes(x=time_index , y = time_index*in_sample),fill=alpha("darkorchid", .3) )+
+# 
+# 
+#   theme_light();dev.off()
+# 
+
+
+```
+
+<br>
+
+<center>
+
+<img src="C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/sample plot.png">
+
+</center>
+
+<br>
+
+#### Inicialmente se selecciona un parámetro $\alpha$ que sugiere la cantidad de información que va a ser empleada en en todo el ejercicio (entrenamiento, calibración y prueba), expresada como proporción del tamaño de la muestra. Posteriormente se identifican las observaciones que poseen un margen de por lo menos $\frac{\alpha}{2}*N$ observaciones antes y después de dicha observación. La observación de referencia (punteada morada) es seleccionada de forma aleatoria de la ventana factible (entre las punteadas negras). Alrededor de la observación de referencia, se selecciona una ventana efectiva de estimación que contiene exactamente un $\frac{\alpha}{2}*N$ observaciones a cada lado de la referencia . De esta forma, la cantidad de información para entrenamiento se reduce a $\alpha*N$  registros que son más similares, ya que están próximos en el tiempo.
+
+<br>
+
+#### 3.3 Modelling 
+
+<br>
+
+#### (3.1) Representación 
+
+<br>
+
+#### En términos de representación del sistema estudiado como proceso estadístico, proponemos una implementación del algoritmo de Gradient Boosting.
+
+
+#### Gradient Boosting es una técnica de Machine Learning para  problemas de regresión y clasificación que genera un modelo predictivo a través del ensamblaje de modelos individualmente débiles, típicamente árboles de decisión. (2) Este construye el modelo global de forma secuencial  y se puede generalizar  a diferentes funciones de pérdida.
+
+<br>
+
+#### (3.2) Estimación
+
+<br>
+
+#### En términos de estimación, podemos interpretar el funcionamiento de los algoritmos de boosting  como una implementación de *descenso de gradiente funcional*. Es decir, el algoritmo trata de optimizar una función de costos sobre el conjunto de modelos factibles al escoger la función (modelo) que que genera el mayor descenso de gradiente.
+
+
+<br>
+
+#### (3.3) Detalles técnicos
+
+<br>
+
+	
+#### A continuación, describimos algunos detalles técnicos del algoritmo de **Gradient Boosting** según la implementación concreta en la librería **gbm** de R Studio.
+
+<br>
+
+#### En cualquier problema de modelación predictiva, deseamos encontrar una función de regresión $\hat{f}(x)$ que minimiza la expectativa de la función de pérdida $\psi(y, f)$
+
+#### La operación de un  algoritmo de Gradient Boosting depende de los siguientes parámetros:
+
+* #### Función de pérdida
+* #### Número de Iteraciones $T$
+* #### Profundidad del árbol individual $K$
+* #### Tasa de Aprendizaje  $\lambda$
+* #### Tasa SubMuestreo. $p$
+
+<br>
+
+![](C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/3.3.1.png)
+
+
+<br>
+```{r, eval=FALSE, echo=TRUE}
+
+
+### (3) Modelling:
+
+library(randomForest)
+
+
+
+## Definir Grilla de Hiper-Parámetros:
+
+## (1) Para la Cantidad de Árboles
+
+n_tree=c(2000, 4000, 6000)
+
+## (2) Profundidad de La Interacción
+
+inter_depth=seq(from=1, to=11, by=2)
+
+## (3) Tamaño Mínimo del Nodo Terminal
+
+node_size=seq(from=15, to=30, by=2)
+
+## Inicializar Tabla de Evaluación de Modelo
+
+theta=expand.grid("inter_depth"=inter_depth, "min_node_size"=node_size)
+
+theta$presicion_si=NA
+theta$presicion_no=NA
+
+theta$recall_si=NA
+theta$recall_no=NA
+
+## Loop de Calibración del Modelo
+
+
+for (t in 1:nrow(theta)){
+  
+  naive_boosting_fit=gbm::gbm(
+    
+    formula=as.numeric(train_lab=="Sí")~. , ## response as function of all covariates,
+    
+    data=train_data0,
+    
+    distribution="bernoulli", 
+    
+    ## Complexity Parameters
+    
+    n.trees= 2000, 
+    interaction.depth= theta$inter_depth[t],
+    n.minobsinnode = theta$min_node_size[t]
+  )
+  
+  
+  
+  
+  ### Construyendo Métricas de Desempeño
+  
+  tab=
+    table("ground_truth"=val_data0$train_lab, ## Comparar con el conjunto de Evaluación
+          "predicted"=
+            ( ifelse(predict(naive_boosting_fit, val_data0 , n.trees=2000,  type="response")>=0.5, "Sí_pred", "No_pred") )
+    )
+  
+  
+  ### Almacenar el desempeño del Modelo
+  
+  
+  
+  ## precision=
+  
+  theta$presicion_si[t]=
+    tab["Sí","Sí_pred"]/(tab["Sí","Sí_pred"]+tab["No","Sí_pred"])
+  
+  theta$presicion_no[t]=
+    tab["No","No_pred"]/sum(tab[,"No_pred"])
+  
+  
+  ## recall=
+  theta$recall_si[t]=
+    tab["Sí","Sí_pred"]/sum(tab["Sí",])
+  
+  theta$recall_no[t]=
+    tab["No","No_pred"]/sum(tab["No",])
+  
+  library(ggplot2)
+  
+  p=
+    ggplot(data=theta, aes(y= presicion_si, x=recall_si))+
+    
+    ggtitle("Desempeño de los Modelos: Precisión vs Recall")+
+    
+    geom_point(col=alpha("darkorchid", .3), size=5, lwd=2)+
+    theme_light()
+  
+  
+  setwd(root_wd)
+  setwd("results session")
+  
+  save(list=c("theta", "p"), 
+       file=sprintf("% s.RData",
+                    stringr::str_replace_all(format(Sys.time(), "%a %b %d %X %Y"), pattern=":", replacement="_")))
+  
+  ## Reportar Progreso del Algoritmo
+  
+  print(sprintf("Estimado el modelo %s de %s", t, nrow(theta)))
+}
+
+
+ 
+```
+
+<br>
+
+#### 4. Client Guided Calibration
+
+<br>
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
+
+ setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/results session")
+
+load(file="dom. jun. 30 10_51_49 p. m. 2019.RData")
+
+p
+ 
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center'}
+
+theta=na.omit(theta)
+theta[3:6]=lapply(theta[3:6], function(x){round(x*100,4)})
+
+knitr::kable(x=theta, format = "markdown") %>% kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+ 
+```
+
+<br>
+<hr>
+
+#### **5. Influencia de Variables y evaluación FINAL **
+
+<br>
+
+#### La siguiente medida de importancia de variables está justificada en <a, href="https://statweb.stanford.edu/~jhf/ftp/trebst.pdf"> Friedman (2001) </a>. Intuitivamente, la medición está asociada a la contribución de la variable en términos de poder clasificatorio del modelo, es decir, cuánto contribuye cada variable a separar cada una de las clases. El poder clasificatorio de la variable se mide en términos de el incremento en la pureza de los grupos de predicción antes vs después de utilizar dicha variable. Es decir, se estima que una variable contribuye más, en la medida que al generar una partición de la muestra *por esa variable*, se generan grupos delimitados con resultados definidos (mujeres maltratadas vs no maltratadas). 
+
+<br>
+
+```{r echo=FALSE, fig.align='center', width=14}
+  
+
+## Evaluación de Modelo, Importancia de Variables
+
+
+## Utilizamos el mejor modelo
+
+# ## Estimación del Modelo Óptimo
+# 
+# naive_boosting_fit=gbm::gbm(
+#   
+#   formula=as.numeric(train_lab=="Sí")~. , ## response as function of all covariates,
+#   
+#   data=train_data0,
+#   
+#   distribution="bernoulli", 
+#   
+#   ## Complexity Parameters
+#   
+#   n.trees= 2000, 
+#   interaction.depth= 11,
+#   n.minobsinnode = 15
+# )
+# 
+# 
+# setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/Violancia de Género/results session")
+# save(naive_boosting_fit, file="Best Model.RData")
+
+
+setwd("C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/results session")
+load("Best Model.RData")
+tab=read.table("best model.txt", sep="\t")
+tab$var=rownames(tab)
+
+#### Importancia de Variables
+
+# var_importance=
+# summary(naive_boosting_fit)[-1,]
+# 
+# h=var_importance$rel.inf;names(h)=as.character(var_importance$var)
+# # write.table(x=h, file="best model.txt", sep="\t")
+
+windows.options(width=14, height=8)
+
+barplot(
+
+  ## Argumento (vector numérico) a graficar con barras:
+
+  height=tab$x,
+  horiz = TRUE,
+
+  ## Tìtulo y nombre de los Ejes
+
+  main="Importancia Relativa de las  Variables",
+
+  ## Crear escala de Colores de longitud 32 para las barras:
+
+  col=terrain.colors(length(tab$x)),
+
+  ## Otras preferencias: Bordeado de las barras, tamaño de la letra:
+
+  border=FALSE,
+  las=2,
+  cex.axis=.7,
+  cex.names=.5,
+  
+   names.arg=tab$var
+)
+
+
+
+
+```
+
+#### Para interpretar estos resultados, por favor obsérvese que un valor alto en importancia de variables implica que la variable es importante para mejorar la clasificación entre mujeres maltratadas/no maltratadas. Esto, con independencia de la dirección de la relación: Es decir, la variable puede afectar positiva o negativamente la probabilidad de maltrato. La dirección de la relación correspondiente se puede rescatar por medio de intución e interpretación.
+
+
+
+
+<br>
+<hr>
+
+#### **6. Referencias**
+
+<br>
+
+
+```{r call references} 
+
+## (replicable over multiple documents)
+
+## install.packages("readtext")
+
+setwd(root_wd)
+
+ref=readtext::readtext(file="ref.docx" ## (to word document)
+                          )
+
+ref=stringr::str_split(ref$text, pattern="BIBLIOGRAPHY" )[[1]][2]
+
+ref=data.frame( "References"=unlist(stringr::str_split( ref, pattern="\n" )))
+
+
+## Render Bibliography in markdown
+
+library(dplyr)
+knitr::kable(x=ref, format = "markdown") %>% kableExtra::kable_styling(bootstrap_options = c("striped", "hover"))
+ 
+
+```
