@@ -1,0 +1,1025 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Predicción de Violencia Física Contra la Mujer en el Perú; Un enfoque de Big Data y Aprendizaje de Máquinas},
+            pdfauthor={Nemías Seboya Ríos, Juan Guillermo Osío Jaramillo},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Predicción de Violencia Física Contra la Mujer en el Perú; Un enfoque de
+Big Data y Aprendizaje de Máquinas}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Nemías Seboya Ríos, Juan Guillermo Osío Jaramillo}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{23 de junio de 2019}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+\begin{document}
+\maketitle
+
+\paragraph{\texorpdfstring{\textbf{Motivación
+General}}{Motivación General}}\label{motivacion-general}
+
+\paragraph{La violencia contra la mujer es la que se ejerce por su
+condición de mujer, siendo esta consecuencia de la discriminación que
+sufre tanto en las leyes como en la práctica, y de la persistencia de
+las desigualdades por razones de género. Esta violencia tiene un amplio
+espectro de expresión, que incluye desde el menosprecio, hasta la
+agresión física o psicológica y el asesinato. Entre 2010 y 2017, 837
+mujeres fueron asesinadas y 1172 intentos de asesinato fueron llevados a
+cabo en el Perú. El Instituto Nacional de Estadística e Informática de
+dicho país emplea un concepto de violencia física cuya incidencia sobre
+la población femenina se colocaba en 32.3\% para el año 2014. El
+promedio de la misma estadística podría situarse en 35.92\% en los
+últimos 10
+años.}\label{la-violencia-contra-la-mujer-es-la-que-se-ejerce-por-su-condicion-de-mujer-siendo-esta-consecuencia-de-la-discriminacion-que-sufre-tanto-en-las-leyes-como-en-la-practica-y-de-la-persistencia-de-las-desigualdades-por-razones-de-genero.-esta-violencia-tiene-un-amplio-espectro-de-expresion-que-incluye-desde-el-menosprecio-hasta-la-agresion-fisica-o-psicologica-y-el-asesinato.-entre-2010-y-2017-837-mujeres-fueron-asesinadas-y-1172-intentos-de-asesinato-fueron-llevados-a-cabo-en-el-peru.-el-instituto-nacional-de-estadistica-e-informatica-de-dicho-pais-emplea-un-concepto-de-violencia-fisica-cuya-incidencia-sobre-la-poblacion-femenina-se-colocaba-en-32.3-para-el-ano-2014.-el-promedio-de-la-misma-estadistica-podria-situarse-en-35.92-en-los-ultimos-10-anos.}
+
+\paragraph{Por otra parte, la entonces Ministra para la Mujer y
+Poblaciones Vulnerables Ana María Mendieta expresaba en junio de 2018
+que}\label{por-otra-parte-la-entonces-ministra-para-la-mujer-y-poblaciones-vulnerables-ana-maria-mendieta-expresaba-en-junio-de-2018-que}
+
+``Las cifras nos demuestran que nuestra sociedad aún está influida por
+el machismo, que impone ejercicio de poder por parte de los hombres
+sobre las mujeres. Esta concepción machista es la que justifica y
+reproduce la violencia familiar y sexual de la que somos testigos
+diariamiente, y que constituye un riesgo para el bienestar y la vida de
+las mujeres''
+
+\paragraph{Un aspecto notable de la violencia contra la mujer es que
+suele ajustarse a patrones sociales muy específicos y por lo tanto, su
+ocurrencia suele estar acompañada tanto de factores de riesgo (edad,
+pertenencia a minorías étnicas y clases económicas desfavorecidas, bajos
+niveles de educación) como de informaciones preliminares que anuncian
+una alta probabilidad del evento (historias de abuso familiar, ser
+víctima de varias agresiones por parte de familiares y actores en el
+entorno, etc.). La existencia de esta fuerte estructura de
+determinaciones entre características individuales y que una mujer sea
+víctima de violencia de género sugiere la factibilidad de elaborar una
+estimación sobre la probabilidad de ocurrencia de este evento, lo cual
+facilitaría la focalización de una política pública por medio de
+identificación de poblaciones
+vulnerables.}\label{un-aspecto-notable-de-la-violencia-contra-la-mujer-es-que-suele-ajustarse-a-patrones-sociales-muy-especificos-y-por-lo-tanto-su-ocurrencia-suele-estar-acompanada-tanto-de-factores-de-riesgo-edad-pertenencia-a-minorias-etnicas-y-clases-economicas-desfavorecidas-bajos-niveles-de-educacion-como-de-informaciones-preliminares-que-anuncian-una-alta-probabilidad-del-evento-historias-de-abuso-familiar-ser-victima-de-varias-agresiones-por-parte-de-familiares-y-actores-en-el-entorno-etc..-la-existencia-de-esta-fuerte-estructura-de-determinaciones-entre-caracteristicas-individuales-y-que-una-mujer-sea-victima-de-violencia-de-genero-sugiere-la-factibilidad-de-elaborar-una-estimacion-sobre-la-probabilidad-de-ocurrencia-de-este-evento-lo-cual-facilitaria-la-focalizacion-de-una-politica-publica-por-medio-de-identificacion-de-poblaciones-vulnerables.}
+
+\paragraph{En este documento, reportamos los resultados de haber
+prestado una asesoría técnica a un docente investigador que desarrolla
+un sistema predictivo para la ocurrencia de violencia física contra la
+mujer peruana. Describimos el nivel de desarrollo del proyecto que se
+nos proporciona, nuestro diagnóstico y la recomendación e implementación
+que aportamos al
+proyecto.}\label{en-este-documento-reportamos-los-resultados-de-haber-prestado-una-asesoria-tecnica-a-un-docente-investigador-que-desarrolla-un-sistema-predictivo-para-la-ocurrencia-de-violencia-fisica-contra-la-mujer-peruana.-describimos-el-nivel-de-desarrollo-del-proyecto-que-se-nos-proporciona-nuestro-diagnostico-y-la-recomendacion-e-implementacion-que-aportamos-al-proyecto.}
+
+\paragraph{\texorpdfstring{\textbf{1. Presentación del Material del
+Proyecto}}{1. Presentación del Material del Proyecto}}\label{presentacion-del-material-del-proyecto}
+
+\paragraph{\texorpdfstring{Para el propósito de esta asesoría nos fue
+proporcionado un material de proyecto que abarca; (1) La base de datos
+utilizada, (2) Un script de trabajo en formato de \emph{Jupiter
+Notebook} que contiene el desarrollo de un sistema de predicción basado
+en algoritmos de Machine Learning. A continuación, presentamos el
+material
+proporcionado:}{Para el propósito de esta asesoría nos fue proporcionado un material de proyecto que abarca; (1) La base de datos utilizada, (2) Un script de trabajo en formato de Jupiter Notebook que contiene el desarrollo de un sistema de predicción basado en algoritmos de Machine Learning. A continuación, presentamos el material proporcionado:}}\label{para-el-proposito-de-esta-asesoria-nos-fue-proporcionado-un-material-de-proyecto-que-abarca-1-la-base-de-datos-utilizada-2-un-script-de-trabajo-en-formato-de-jupiter-notebook-que-contiene-el-desarrollo-de-un-sistema-de-prediccion-basado-en-algoritmos-de-machine-learning.-a-continuacion-presentamos-el-material-proporcionado}
+
+\paragraph{1.1 Presentación de los Datos
+Proporcionados}\label{presentacion-de-los-datos-proporcionados}
+
+\paragraph{\texorpdfstring{Nos fue otorgada una data-set basada en el
+funcionamiento durante una más de década de una operación estadística
+del \emph{Instituto Nacional de Estadística e Informática} del Perú. Por
+lo tanto la base de datos que recibimos tiene un poco más 200000
+registros de mujeres peruanas con la siguiente
+información:}{Nos fue otorgada una data-set basada en el funcionamiento durante una más de década de una operación estadística del Instituto Nacional de Estadística e Informática del Perú. Por lo tanto la base de datos que recibimos tiene un poco más 200000 registros de mujeres peruanas con la siguiente información:}}\label{nos-fue-otorgada-una-data-set-basada-en-el-funcionamiento-durante-una-mas-de-decada-de-una-operacion-estadistica-del-instituto-nacional-de-estadistica-e-informatica-del-peru.-por-lo-tanto-la-base-de-datos-que-recibimos-tiene-un-poco-mas-200000-registros-de-mujeres-peruanas-con-la-siguiente-informacion}
+
+\begin{itemize}
+\item ~
+  \paragraph{\texorpdfstring{Variables que describen el entorno material
+  y cultural que habita el sujeto: Como la \textbf{región}, el
+  \textbf{tipo de residencia} y el \textbf{tipo de lugar de
+  crianza}}{Variables que describen el entorno material y cultural que habita el sujeto: Como la región, el tipo de residencia y el tipo de lugar de crianza}}\label{variables-que-describen-el-entorno-material-y-cultural-que-habita-el-sujeto-como-la-region-el-tipo-de-residencia-y-el-tipo-de-lugar-de-crianza}
+\item ~
+  \paragraph{\texorpdfstring{Variables que denotan el Perfil
+  Sociodemográfico del individuo: como \textbf{grupo de edad}, la
+  \textbf{etnicidad} y el \textbf{número de miembros del
+  hogar}}{Variables que denotan el Perfil Sociodemográfico del individuo: como grupo de edad, la etnicidad y el número de miembros del hogar}}\label{variables-que-denotan-el-perfil-sociodemografico-del-individuo-como-grupo-de-edad-la-etnicidad-y-el-numero-de-miembros-del-hogar}
+\item ~
+  \paragraph{\texorpdfstring{Niveles de Educación del Individuo: En
+  términos de \textbf{nivel educativo más alto alcanzado} y
+  \textbf{grado de
+  alfabetización}}{Niveles de Educación del Individuo: En términos de nivel educativo más alto alcanzado y grado de alfabetización}}\label{niveles-de-educacion-del-individuo-en-terminos-de-nivel-educativo-mas-alto-alcanzado-y-grado-de-alfabetizacion}
+\item ~
+  \paragraph{\texorpdfstring{Situación Económica del Individuo, medida
+  por medio del \textbf{Índice de Riqueza} metodología
+  INE.}{Situación Económica del Individuo, medida por medio del Índice de Riqueza metodología INE.}}\label{situacion-economica-del-individuo-medida-por-medio-del-indice-de-riqueza-metodologia-ine.}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{Variables que informan sobre el
+  maltrato físico por parte de diferentes actores en el entorno}: Como
+  los padres, otros familiares y agentes externos a la
+  familia.}{Variables que informan sobre el maltrato físico por parte de diferentes actores en el entorno: Como los padres, otros familiares y agentes externos a la familia.}}\label{variables-que-informan-sobre-el-maltrato-fisico-por-parte-de-diferentes-actores-en-el-entorno-como-los-padres-otros-familiares-y-agentes-externos-a-la-familia.}
+\item ~
+  \paragraph{\texorpdfstring{Una variable binaria que de identifica si
+  la mujer \textbf{recibió o no maltrato
+  físico}}{Una variable binaria que de identifica si la mujer recibió o no maltrato físico}}\label{una-variable-binaria-que-de-identifica-si-la-mujer-recibio-o-no-maltrato-fisico}
+\end{itemize}
+
+\paragraph{1.2 Análisis Exploratorio de
+Variables}\label{analisis-exploratorio-de-variables}
+
+\paragraph{(1) Tasa de Mujeres Afectadas por
+Violencia}\label{tasa-de-mujeres-afectadas-por-violencia}
+
+\paragraph{En primer lugar, presentamos nuestra estimación de la
+cantidad de mujeres que han sido víctimas de violencia física, según el
+concepto manejado por el
+INEI}\label{en-primer-lugar-presentamos-nuestra-estimacion-de-la-cantidad-de-mujeres-que-han-sido-victimas-de-violencia-fisica-segun-el-concepto-manejado-por-el-inei}
+
+\begin{verbatim}
+## [1] "% de Mujeres que han recibido  Violencia Física: 35.92"
+\end{verbatim}
+
+\paragraph{\texorpdfstring{Es decir, que la probabilidad de que la mujer
+típica peruana sea agredida se ha mantenido en niveles próximos al 36\%
+durante los últimos 10 años. Esto es una estimación de probabilidad
+incondicional, que todavía no incorpora el potencial de \emph{profiling}
+representado por la base de
+datos}{Es decir, que la probabilidad de que la mujer típica peruana sea agredida se ha mantenido en niveles próximos al 36\% durante los últimos 10 años. Esto es una estimación de probabilidad incondicional, que todavía no incorpora el potencial de profiling representado por la base de datos}}\label{es-decir-que-la-probabilidad-de-que-la-mujer-tipica-peruana-sea-agredida-se-ha-mantenido-en-niveles-proximos-al-36-durante-los-ultimos-10-anos.-esto-es-una-estimacion-de-probabilidad-incondicional-que-todavia-no-incorpora-el-potencial-de-profiling-representado-por-la-base-de-datos}
+
+\paragraph{(2) Distribución por Grupos de
+Edad}\label{distribucion-por-grupos-de-edad}
+
+\paragraph{En cuanto a la distribución de la violencia por grupos de
+edad, encontramos el patrón representado en la siguiente
+gráfica:}\label{en-cuanto-a-la-distribucion-de-la-violencia-por-grupos-de-edad-encontramos-el-patron-representado-en-la-siguiente-grafica}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-4-1} \end{center}
+
+\paragraph{Se aprecia un incremento sostenido de la tasa de violencia
+cada grupo de edad. La interpretación de esto podía ser que el mayor
+rechazo a las diferentes formas de violencia por parte de las nuevas
+generaciones (efecto cultura) estaría sobrecompensando la indefensión
+relativa de las mujeres comparativamente más jóvenes (efecto
+vulnerabilidad). Otra explicación podría ser que las mujeres van
+acumulando el riesgo de ser agredidas por lo menos una vez en la vida a
+medida que transcurre su ciclo vitalicio; Es decir, a más años, más
+experiencias que pudieron haber derivado en maltrato (por ejemplo,
+relaciones con distintas parejas,
+etc.).}\label{se-aprecia-un-incremento-sostenido-de-la-tasa-de-violencia-cada-grupo-de-edad.-la-interpretacion-de-esto-podia-ser-que-el-mayor-rechazo-a-las-diferentes-formas-de-violencia-por-parte-de-las-nuevas-generaciones-efecto-cultura-estaria-sobrecompensando-la-indefension-relativa-de-las-mujeres-comparativamente-mas-jovenes-efecto-vulnerabilidad.-otra-explicacion-podria-ser-que-las-mujeres-van-acumulando-el-riesgo-de-ser-agredidas-por-lo-menos-una-vez-en-la-vida-a-medida-que-transcurre-su-ciclo-vitalicio-es-decir-a-mas-anos-mas-experiencias-que-pudieron-haber-derivado-en-maltrato-por-ejemplo-relaciones-con-distintas-parejas-etc..}
+
+\paragraph{(3) Distribución por
+Departamentos}\label{distribucion-por-departamentos}
+
+\paragraph{En cuanto a la distribución de la violencia por
+departamentos, se pudo encontrar el patrón de agregación geográfica
+representado a
+continuación:}\label{en-cuanto-a-la-distribucion-de-la-violencia-por-departamentos-se-pudo-encontrar-el-patron-de-agregacion-geografica-representado-a-continuacion}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-5-1} \end{center}
+
+\paragraph{Que permite corroborar la intuición de que la violencia está
+concentrada geográficamente. Algunos departamentos presentan tasas de
+violencia superiores al promedio nacional hasta en 10 puntos
+porcentuales.}\label{que-permite-corroborar-la-intuicion-de-que-la-violencia-esta-concentrada-geograficamente.-algunos-departamentos-presentan-tasas-de-violencia-superiores-al-promedio-nacional-hasta-en-10-puntos-porcentuales.}
+
+\paragraph{(4) Distribución por Niveles de
+Riqueza}\label{distribucion-por-niveles-de-riqueza}
+
+\paragraph{El INEI maneja una medida categórica de niveles de riqueza
+basada en 5 niveles sucesivos, donde 5 representa el mejor perfil
+económico del sujeto. Hallamos el siguiente patrón de la violencia por
+niveles de
+riqueza:}\label{el-inei-maneja-una-medida-categorica-de-niveles-de-riqueza-basada-en-5-niveles-sucesivos-donde-5-representa-el-mejor-perfil-economico-del-sujeto.-hallamos-el-siguiente-patron-de-la-violencia-por-niveles-de-riqueza}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-6-1} \end{center}
+
+\paragraph{Interesantemente, la tasa de violencia no se comporta de
+forma estrictamente decreciente con la riqueza de los individuos. De
+hecho, la misma se incrementa hasta alcanzar un máximo global en el
+tercer nivel de riqueza (39.41\%) para luego descender al mínimo global
+en el último nivel de riqueza. Esto sugiere que solo un nivel de riqueza
+extremadamente alto se convierte en un factor que contrarresta la
+violencia de
+género.}\label{interesantemente-la-tasa-de-violencia-no-se-comporta-de-forma-estrictamente-decreciente-con-la-riqueza-de-los-individuos.-de-hecho-la-misma-se-incrementa-hasta-alcanzar-un-maximo-global-en-el-tercer-nivel-de-riqueza-39.41-para-luego-descender-al-minimo-global-en-el-ultimo-nivel-de-riqueza.-esto-sugiere-que-solo-un-nivel-de-riqueza-extremadamente-alto-se-convierte-en-un-factor-que-contrarresta-la-violencia-de-genero.}
+
+\paragraph{(5) Correlación entre las diferentes formas de
+Violencia}\label{correlacion-entre-las-diferentes-formas-de-violencia}
+
+\paragraph{Finalmente, proponemos la siguiente representación visual
+(mapa de calor) de las correlaciones que existen entre diferentes formas
+de
+violencia.}\label{finalmente-proponemos-la-siguiente-representacion-visual-mapa-de-calor-de-las-correlaciones-que-existen-entre-diferentes-formas-de-violencia.}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-7-1} \end{center}
+
+\paragraph{1.3 Presentación del Código
+Proporcionado}\label{presentacion-del-codigo-proporcionado}
+
+\paragraph{\texorpdfstring{Nuestro cliente desarrolló un sistema de
+predicción basado en algoritmos de Machine Learning, pero desea mejorar
+su funcionamiento a través del consejo de un experto. La solución
+implementada por nuestro cliente se nos proporcionó en el formato de un
+\textbf{\emph{jupyter notebook}} en lenguaje de programación
+\textbf{Phyton}. El documento hace uso de las librerías de que
+describimos a continuación (si no está interesado, saltar a nuestro
+diagnóstico).}{Nuestro cliente desarrolló un sistema de predicción basado en algoritmos de Machine Learning, pero desea mejorar su funcionamiento a través del consejo de un experto. La solución implementada por nuestro cliente se nos proporcionó en el formato de un jupyter notebook en lenguaje de programación Phyton. El documento hace uso de las librerías de que describimos a continuación (si no está interesado, saltar a nuestro diagnóstico).}}\label{nuestro-cliente-desarrollo-un-sistema-de-prediccion-basado-en-algoritmos-de-machine-learning-pero-desea-mejorar-su-funcionamiento-a-traves-del-consejo-de-un-experto.-la-solucion-implementada-por-nuestro-cliente-se-nos-proporciono-en-el-formato-de-un-jupyter-notebook-en-lenguaje-de-programacion-phyton.-el-documento-hace-uso-de-las-librerias-de-que-describimos-a-continuacion-si-no-esta-interesado-saltar-a-nuestro-diagnostico.}
+
+\paragraph{Uso de Librerías}\label{uso-de-librerias}
+
+\begin{itemize}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{numpy}:}{numpy:}}\label{numpy}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{pandas}:}{pandas:}}\label{pandas}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{matplotlib}:}{matplotlib:}}\label{matplotlib}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{seaborn}:}{seaborn:}}\label{seaborn}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{graphviz}:}{graphviz:}}\label{graphviz}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{scikit
+  learn}:}{scikit learn:}}\label{scikit-learn}
+\end{itemize}
+
+\paragraph{Workflow}\label{workflow}
+
+\paragraph{A partir del código proporcionado, se identificò que la
+solución implementada por el cliente correspondía a al siguiente diseño
+del pipe-line de Machine-Learning. El código de transparencias de color
+en la imagen prentende enfatizar el hecho de que el cliente omitiò
+algunas instancias que nosotros consideramos reelevantes en el diseño
+ideal/óptimo del pipeline de machine
+learning.}\label{a-partir-del-codigo-proporcionado-se-identifico-que-la-solucion-implementada-por-el-cliente-correspondia-a-al-siguiente-diseno-del-pipe-line-de-machine-learning.-el-codigo-de-transparencias-de-color-en-la-imagen-prentende-enfatizar-el-hecho-de-que-el-cliente-omitio-algunas-instancias-que-nosotros-consideramos-reelevantes-en-el-diseno-idealoptimo-del-pipeline-de-machine-learning.}
+
+\begin{figure}
+\centering
+\includegraphics{C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/1.3.1.png}
+\caption{}
+\end{figure}
+
+\paragraph{\texorpdfstring{\textbf{2. Diagnóstico de la solución
+Implementada:}}{2. Diagnóstico de la solución Implementada:}}\label{diagnostico-de-la-solucion-implementada}
+
+\paragraph{Nosotros evaluamos el esquema de trabajo diseñado por nuestro
+cliente, e identificamos los siguientes puntos en los que se puede
+ofrecer un valor
+agregado:}\label{nosotros-evaluamos-el-esquema-de-trabajo-disenado-por-nuestro-cliente-e-identificamos-los-siguientes-puntos-en-los-que-se-puede-ofrecer-un-valor-agregado}
+
+\begin{itemize}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{Feature Engineering}: En el
+  ejercicio no hay una estrategia explícita de ingeniería de variables.
+  Se asume que la mejor representación del sistema estudiado está en el
+  espacio de los datos directamente observados (raw data). Se fuerza la
+  representación numérica de las variables, pero esto genera que las
+  variables nominales sin ordenamiento natural no aporten poder de
+  predicción al modelo (e.g.~la región en la que se localiza la
+  observación). Esto genera que el modelo desperdicie \textbf{insights
+  predictivos} que provienen de la distribución geográfica de la
+  violencia contra la mujer, y la incidencia de factores de riesgo como
+  la etnicidad y el tipo de lugar de
+  crianza.}{Feature Engineering: En el ejercicio no hay una estrategia explícita de ingeniería de variables. Se asume que la mejor representación del sistema estudiado está en el espacio de los datos directamente observados (raw data). Se fuerza la representación numérica de las variables, pero esto genera que las variables nominales sin ordenamiento natural no aporten poder de predicción al modelo (e.g.~la región en la que se localiza la observación). Esto genera que el modelo desperdicie insights predictivos que provienen de la distribución geográfica de la violencia contra la mujer, y la incidencia de factores de riesgo como la etnicidad y el tipo de lugar de crianza.}}\label{feature-engineering-en-el-ejercicio-no-hay-una-estrategia-explicita-de-ingenieria-de-variables.-se-asume-que-la-mejor-representacion-del-sistema-estudiado-esta-en-el-espacio-de-los-datos-directamente-observados-raw-data.-se-fuerza-la-representacion-numerica-de-las-variables-pero-esto-genera-que-las-variables-nominales-sin-ordenamiento-natural-no-aporten-poder-de-prediccion-al-modelo-e.g.la-region-en-la-que-se-localiza-la-observacion.-esto-genera-que-el-modelo-desperdicie-insights-predictivos-que-provienen-de-la-distribucion-geografica-de-la-violencia-contra-la-mujer-y-la-incidencia-de-factores-de-riesgo-como-la-etnicidad-y-el-tipo-de-lugar-de-crianza.}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{Model Calibration:} El ejercicio
+  carece de una estrategia explícita de calibración del modelo. Por lo
+  tanto, no se garantiza que se identifique el modelo con el nivel de
+  complejidad óptimo, con el mejor balance entre eficiencia estadística
+  y precisión de la
+  representación}{Model Calibration: El ejercicio carece de una estrategia explícita de calibración del modelo. Por lo tanto, no se garantiza que se identifique el modelo con el nivel de complejidad óptimo, con el mejor balance entre eficiencia estadística y precisión de la representación}}\label{model-calibration-el-ejercicio-carece-de-una-estrategia-explicita-de-calibracion-del-modelo.-por-lo-tanto-no-se-garantiza-que-se-identifique-el-modelo-con-el-nivel-de-complejidad-optimo-con-el-mejor-balance-entre-eficiencia-estadistica-y-precision-de-la-representacion}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{Model Evaluation:} No se justifica
+  la elección de la métrica de desempeño del modelo. Por lo tanto, la
+  evaluación del modelo no está ponderando los costos de cada tipo de
+  error. En este caso, un gran esfuerzo de modelación debería invertirse
+  mejorar el \textbf{recall} del modelo sobre las etiquetas positivas.
+  Esta medida representa la proporción de la población maltratada
+  físicamente que es identificada por nuestro modelo. Esto permite
+  generar una política pública con amplia cobertura sobre las mujeres
+  maltratadas que mitigue los altos costos (en bienestar social) de la
+  violencia de
+  género.}{Model Evaluation: No se justifica la elección de la métrica de desempeño del modelo. Por lo tanto, la evaluación del modelo no está ponderando los costos de cada tipo de error. En este caso, un gran esfuerzo de modelación debería invertirse mejorar el recall del modelo sobre las etiquetas positivas. Esta medida representa la proporción de la población maltratada físicamente que es identificada por nuestro modelo. Esto permite generar una política pública con amplia cobertura sobre las mujeres maltratadas que mitigue los altos costos (en bienestar social) de la violencia de género.}}\label{model-evaluation-no-se-justifica-la-eleccion-de-la-metrica-de-desempeno-del-modelo.-por-lo-tanto-la-evaluacion-del-modelo-no-esta-ponderando-los-costos-de-cada-tipo-de-error.-en-este-caso-un-gran-esfuerzo-de-modelacion-deberia-invertirse-mejorar-el-recall-del-modelo-sobre-las-etiquetas-positivas.-esta-medida-representa-la-proporcion-de-la-poblacion-maltratada-fisicamente-que-es-identificada-por-nuestro-modelo.-esto-permite-generar-una-politica-publica-con-amplia-cobertura-sobre-las-mujeres-maltratadas-que-mitigue-los-altos-costos-en-bienestar-social-de-la-violencia-de-genero.}
+\item ~
+  \paragraph{\texorpdfstring{\textbf{Algorithms Performance:} Aunque se
+  emplean algoritmos de high-performance, no se consideran las
+  generalizaciones y extensiones de los mismos que típicamente obtienen
+  mejor poder
+  predictivo.}{Algorithms Performance: Aunque se emplean algoritmos de high-performance, no se consideran las generalizaciones y extensiones de los mismos que típicamente obtienen mejor poder predictivo.}}\label{algorithms-performance-aunque-se-emplean-algoritmos-de-high-performance-no-se-consideran-las-generalizaciones-y-extensiones-de-los-mismos-que-tipicamente-obtienen-mejor-poder-predictivo.}
+\end{itemize}
+
+\paragraph{2.2 Nuestro Plan de Trabajo:}\label{nuestro-plan-de-trabajo}
+
+\paragraph{En base a las consideraciones planteadas en nuestro
+diagnóstico anterior, presentamos nuestra plan de trabajo, como la
+extensión del esquema del pipe-line de ML planteado por nuesto
+cliente:}\label{en-base-a-las-consideraciones-planteadas-en-nuestro-diagnostico-anterior-presentamos-nuestra-plan-de-trabajo-como-la-extension-del-esquema-del-pipe-line-de-ml-planteado-por-nuesto-cliente}
+
+\begin{figure}
+\centering
+\includegraphics{C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/2.4.1.png}
+\caption{}
+\end{figure}
+
+\paragraph{En particular, nuestro plan de trabajo respeta en términos
+generales la solución del cliente, pero propone las siguientes
+innovaciones:}\label{en-particular-nuestro-plan-de-trabajo-respeta-en-terminos-generales-la-solucion-del-cliente-pero-propone-las-siguientes-innovaciones}
+
+\begin{itemize}
+\item ~
+  \paragraph{\texorpdfstring{En términos de \textbf{ingeniería de
+  variables}, se implementa la representación de
+  \textbf{one-hot-enconding} de las variables categóricas sin
+  ordenamiento natural. Esta estrategia consiste en que una variable
+  categórica con una cantidad finita de K categorías se representa por K
+  bits de información. Es decir, a cada observación se le asigna un
+  vector k-dimensional de variables indicador, donde la única clase
+  activa (que toma el valor de 1) es la que corresponde a la categoría a
+  la que pertenece la observación. Esto se repite para todas las
+  variables categóricas no ordinales. Como consecuencia de esta
+  estrategia, el tamaño del \textbf{feature space} se incrementa
+  considerablemente, lo cual no necesariamente deteriora el desempeño
+  estadístico pues se emplean algoritmos especializados de minería de
+  datos. En cambio, dicha representación si permite derivar poder
+  discriminatorio de variables como la región, etnicidad y tipo de lugar
+  de
+  crianza.}{En términos de ingeniería de variables, se implementa la representación de one-hot-enconding de las variables categóricas sin ordenamiento natural. Esta estrategia consiste en que una variable categórica con una cantidad finita de K categorías se representa por K bits de información. Es decir, a cada observación se le asigna un vector k-dimensional de variables indicador, donde la única clase activa (que toma el valor de 1) es la que corresponde a la categoría a la que pertenece la observación. Esto se repite para todas las variables categóricas no ordinales. Como consecuencia de esta estrategia, el tamaño del feature space se incrementa considerablemente, lo cual no necesariamente deteriora el desempeño estadístico pues se emplean algoritmos especializados de minería de datos. En cambio, dicha representación si permite derivar poder discriminatorio de variables como la región, etnicidad y tipo de lugar de crianza.}}\label{en-terminos-de-ingenieria-de-variables-se-implementa-la-representacion-de-one-hot-enconding-de-las-variables-categoricas-sin-ordenamiento-natural.-esta-estrategia-consiste-en-que-una-variable-categorica-con-una-cantidad-finita-de-k-categorias-se-representa-por-k-bits-de-informacion.-es-decir-a-cada-observacion-se-le-asigna-un-vector-k-dimensional-de-variables-indicador-donde-la-unica-clase-activa-que-toma-el-valor-de-1-es-la-que-corresponde-a-la-categoria-a-la-que-pertenece-la-observacion.-esto-se-repite-para-todas-las-variables-categoricas-no-ordinales.-como-consecuencia-de-esta-estrategia-el-tamano-del-feature-space-se-incrementa-considerablemente-lo-cual-no-necesariamente-deteriora-el-desempeno-estadistico-pues-se-emplean-algoritmos-especializados-de-mineria-de-datos.-en-cambio-dicha-representacion-si-permite-derivar-poder-discriminatorio-de-variables-como-la-region-etnicidad-y-tipo-de-lugar-de-crianza.}
+\item ~
+  \paragraph{Por otra parte, el punto anterior si puede agravar el coste
+  computacional (en tiempo y memoria), el cual escala rápidamente debido
+  a la cantidad masiva de observaciones. Para relajar esta restricción,
+  se propone incorporar el tiempo como predictor y restringir el
+  entrenamiento a una ventana de estimación de cierto tamaño alrededor
+  de una observación de referencia. Al hacer esto, se puede perder
+  cierta eficiencia estadística pero también se gana precisión en la
+  representación, pues observaciones que son más próximas temporalmente
+  pueden ser más similares entre sí. Los esencial es que esto nos
+  permite alcanzar un compromiso entre el tamaño de la representación y
+  el tiempo de
+  entrenamiento.}\label{por-otra-parte-el-punto-anterior-si-puede-agravar-el-coste-computacional-en-tiempo-y-memoria-el-cual-escala-rapidamente-debido-a-la-cantidad-masiva-de-observaciones.-para-relajar-esta-restriccion-se-propone-incorporar-el-tiempo-como-predictor-y-restringir-el-entrenamiento-a-una-ventana-de-estimacion-de-cierto-tamano-alrededor-de-una-observacion-de-referencia.-al-hacer-esto-se-puede-perder-cierta-eficiencia-estadistica-pero-tambien-se-gana-precision-en-la-representacion-pues-observaciones-que-son-mas-proximas-temporalmente-pueden-ser-mas-similares-entre-si.-los-esencial-es-que-esto-nos-permite-alcanzar-un-compromiso-entre-el-tamano-de-la-representacion-y-el-tiempo-de-entrenamiento.}
+\item ~
+  \paragraph{\texorpdfstring{En términos de \textbf{modelación}, se
+  propone emplear la técnica de Gradient Boosting, un algoritmo de
+  aprendizaje supervisado que se basa en construir de forma secuencial,
+  un conjunto de modelos individualmente débiles. Esta estrategia
+  empírica se explica con detalle en la sección de modelación del
+  documento.}{En términos de modelación, se propone emplear la técnica de Gradient Boosting, un algoritmo de aprendizaje supervisado que se basa en construir de forma secuencial, un conjunto de modelos individualmente débiles. Esta estrategia empírica se explica con detalle en la sección de modelación del documento.}}\label{en-terminos-de-modelacion-se-propone-emplear-la-tecnica-de-gradient-boosting-un-algoritmo-de-aprendizaje-supervisado-que-se-basa-en-construir-de-forma-secuencial-un-conjunto-de-modelos-individualmente-debiles.-esta-estrategia-empirica-se-explica-con-detalle-en-la-seccion-de-modelacion-del-documento.}
+\item ~
+  \paragraph{\texorpdfstring{Para la \textbf{calibración} se proporciona
+  al cliente una visualización del desempeño en el conjunto de
+  evaluación de 50 modelos con diferentes asignaciones de parámetros. La
+  visualización se genera sobre el espacio de \emph{recall vs
+  precisión}, lo cual permite al \emph{policy-maker} racionalizar el
+  desempeño de modelo como si fueran características de una política
+  pública en etapa de
+  diseño.}{Para la calibración se proporciona al cliente una visualización del desempeño en el conjunto de evaluación de 50 modelos con diferentes asignaciones de parámetros. La visualización se genera sobre el espacio de recall vs precisión, lo cual permite al policy-maker racionalizar el desempeño de modelo como si fueran características de una política pública en etapa de diseño.}}\label{para-la-calibracion-se-proporciona-al-cliente-una-visualizacion-del-desempeno-en-el-conjunto-de-evaluacion-de-50-modelos-con-diferentes-asignaciones-de-parametros.-la-visualizacion-se-genera-sobre-el-espacio-de-recall-vs-precision-lo-cual-permite-al-policy-maker-racionalizar-el-desempeno-de-modelo-como-si-fueran-caracteristicas-de-una-politica-publica-en-etapa-de-diseno.}
+\end{itemize}
+
+\paragraph{\texorpdfstring{\textbf{3. Desarrollo del Plan de Trabajo
+}}{3. Desarrollo del Plan de Trabajo }}\label{desarrollo-del-plan-de-trabajo}
+
+\paragraph{Puesto que el cliente nos entrega una base de datos limpia y
+estandarizada, presentamos el desarrollo de nuesto plan de trabajopara
+los pasos (2 a
+5)}\label{puesto-que-el-cliente-nos-entrega-una-base-de-datos-limpia-y-estandarizada-presentamos-el-desarrollo-de-nuesto-plan-de-trabajopara-los-pasos-2-a-5}
+
+\paragraph{3.2 Feature Engineering:}\label{feature-engineering}
+
+\paragraph{El siguiente bloque de código contiene la transformación de
+las variables categóricas que se justificó en el planteamiento del plan
+de
+trabajo.}\label{el-siguiente-bloque-de-codigo-contiene-la-transformacion-de-las-variables-categoricas-que-se-justifico-en-el-planteamiento-del-plan-de-trabajo.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## (2) Block Wise Feature Enginering}
+
+\NormalTok{num_var=}\KeywordTok{c}\NormalTok{(}
+\NormalTok{  ## Mediciones numéricas y Categóricas Ordinales}
+  
+  \StringTok{"grupo_edad"}\NormalTok{,}
+  \StringTok{"n_miembros_hogar"}\NormalTok{, }
+  \StringTok{"educ"}\NormalTok{,}
+  \StringTok{"nivel_alfa"}\NormalTok{, }
+  \StringTok{"ind_riqueza"}\NormalTok{,}
+  
+\NormalTok{  ## Variables dicótomas que identifican diferentes fuentes}
+\NormalTok{  ## de maltrato}
+  
+  \StringTok{"maltrato_padres"}\NormalTok{, }
+  \StringTok{"maltrato_fam"}\NormalTok{,}
+  \StringTok{"maltrato_padrastros"}\NormalTok{,}
+  \StringTok{"matrato_otro"}\NormalTok{,    }
+  \StringTok{"maltrato_padre_a_madre"}\NormalTok{)}
+
+
+\NormalTok{## Porción de la información en var numéricas:}
+
+\NormalTok{num_info=dplyr}\OperatorTok{::}\KeywordTok{select}\NormalTok{(ine_data, num_var )}
+
+
+\NormalTok{## Aislar porción de la información en variables categóricas}
+
+\NormalTok{non_num=}\KeywordTok{setdiff}\NormalTok{(}\KeywordTok{names}\NormalTok{(ine_data), num_var)}
+
+\NormalTok{cat_var=}\KeywordTok{c}\NormalTok{(}\StringTok{"región",}
+\StringTok{          "}\NormalTok{tipo_residencia}\StringTok{",}
+\StringTok{          "}\NormalTok{tipo_lugar_crianza}\StringTok{",}
+\StringTok{          "}\NormalTok{etnicidad}\StringTok{")}
+
+\StringTok{cat_info=dplyr::select(ine_data, cat_var)}
+
+\StringTok{head(cat_info)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   región tipo_residencia tipo_lugar_crianza etnicidad
+## 1      1               1                  0        10
+## 2      1               1                  2        10
+## 3      1               1                  2        10
+## 4      1               1                  1        10
+## 5      1               1                  2        10
+## 6      1               1                  3        10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## One hot Encoding Representation of Categorical Information}
+
+\NormalTok{cat_info2=}\KeywordTok{lapply}\NormalTok{(cat_info, }\ControlFlowTok{function}\NormalTok{(x)\{ ans=dummies}\OperatorTok{::}\KeywordTok{dummy}\NormalTok{(x, }\DataTypeTok{sep=}\StringTok{"_"}\NormalTok{)\})}
+
+
+
+\ControlFlowTok{for}\NormalTok{ (l }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(cat_info2))\{}
+  
+  \KeywordTok{colnames}\NormalTok{(cat_info2[[l]])=}
+\StringTok{    }
+\StringTok{    }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{names}\NormalTok{(cat_info2)[l], }\DecValTok{1}\OperatorTok{:}\KeywordTok{ncol}\NormalTok{(cat_info2[[l]])  )}
+\NormalTok{\}}
+
+
+
+\CommentTok{# lapply(cat_info, function(x)\{length(table(x))\})}
+\CommentTok{# lapply(cat_info2, ncol)}
+\CommentTok{# lapply(cat_info2, nrow)}
+
+\CommentTok{# cat_info2=mapply(function, ...)}
+\CommentTok{#   }
+\NormalTok{## Reduce is one of Common Higher-Order Functions in Functional Programming Languages}
+
+\NormalTok{cat_info3=}\KeywordTok{as.data.frame}\NormalTok{(}\KeywordTok{Reduce}\NormalTok{(}\DataTypeTok{f=}\ControlFlowTok{function}\NormalTok{(x,y)\{}\KeywordTok{cbind}\NormalTok{(x,y)\}, }\DataTypeTok{x=}\NormalTok{cat_info2))}
+
+\NormalTok{## Construir tabla contacta con toda la información procesada}
+
+\NormalTok{feature_matrix=}\KeywordTok{cbind}\NormalTok{(num_info, cat_info3)}
+
+\NormalTok{## Diferencia en cantidad de Variables y tamaño de los objetos}
+
+\KeywordTok{ncol}\NormalTok{(feature_matrix)}\OperatorTok{-}\KeywordTok{ncol}\NormalTok{(ine_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 38
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{object.size}\NormalTok{(feature_matrix)}\OperatorTok{-}\KeywordTok{object.size}\NormalTok{(ine_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 31397992 bytes
+\end{verbatim}
+
+\paragraph{\texorpdfstring{La representación como
+\emph{one-hot-encoding} consiste en 38 columnas adicionales que implican
+31398064 bytes en el tamaño de la base de datos. La segunda
+representación puede ser especialmente problemática para algoritmos que
+hacen varios escaneos sobre la base de datos. El siguiente bloque de
+código se refiere nuestra estrategia de retringir la ventana de
+entrenamiento:}{La representación como one-hot-encoding consiste en 38 columnas adicionales que implican 31398064 bytes en el tamaño de la base de datos. La segunda representación puede ser especialmente problemática para algoritmos que hacen varios escaneos sobre la base de datos. El siguiente bloque de código se refiere nuestra estrategia de retringir la ventana de entrenamiento:}}\label{la-representacion-como-one-hot-encoding-consiste-en-38-columnas-adicionales-que-implican-31398064-bytes-en-el-tamano-de-la-base-de-datos.-la-segunda-representacion-puede-ser-especialmente-problematica-para-algoritmos-que-hacen-varios-escaneos-sobre-la-base-de-datos.-el-siguiente-bloque-de-codigo-se-refiere-nuestra-estrategia-de-retringir-la-ventana-de-entrenamiento}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{### Conformar única base de datos con toda la información ya transformada:}
+
+\CommentTok{# all_train_data=cbind(feature_matrix, train_lab=ine_data$lab_response)}
+\CommentTok{# all_train_data$time_index=as.numeric(row.names(all_train_data))}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# ## Escogemos el radio de la ventana de estimación, como proporción del tamaño de la muestra}
+\CommentTok{# }
+\CommentTok{# window_size=0.2}
+\CommentTok{# }
+\CommentTok{# ## Delimitamos a las observaciones que tienen suficiente información}
+\CommentTok{# }
+\CommentTok{# feasible_window=}
+\CommentTok{#   round(c(}
+\CommentTok{#     window_size*nrow(all_train_data)+1,}
+\CommentTok{#     nrow(all_train_data)-window_size*nrow(all_train_data)}
+\CommentTok{#   ))}
+\CommentTok{# }
+\CommentTok{# ## Escogemos de forma aleatoria una única observación dentro del conjunto}
+\CommentTok{# ## factible}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# eval_time=}
+\CommentTok{#   sample(feasible_window[1]:feasible_window[2], size=1)}
+\CommentTok{# }
+\CommentTok{# ## Determinamos una ventana de estimación alrededor de esta observación}
+\CommentTok{# }
+\CommentTok{# eval_window= c(floor(eval_time-window_size*nrow(all_train_data)),}
+\CommentTok{#                 floor(eval_time+window_size*nrow(all_train_data)))}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# ## Restringimos los datos a una ventana de (window_size*100)% de la cantidad de observaciones antes y después de una observación de referencia}
+\CommentTok{# }
+\CommentTok{# effective_train_data=dplyr::filter(all_train_data, time_index %in%  eval_window[1]:eval_window[2])}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# ## Corremos una lotería para identificar las Observaciones en Entrenamiento, Validación  y Prueba}
+\CommentTok{# }
+\CommentTok{# rows=1:nrow(effective_train_data)}
+\CommentTok{# }
+\CommentTok{# training_index=sample( rows , 0.4*nrow(effective_train_data))}
+\CommentTok{# }
+\CommentTok{# without_training= rows[!(rows %in% training_index)]}
+\CommentTok{# }
+\CommentTok{# validation_index=sample( without_training, 0.4*nrow(effective_train_data))}
+\CommentTok{# }
+\CommentTok{# test_index= rows[!(rows %in% training_index) & !(rows %in% validation_index) ]}
+\CommentTok{# }
+\CommentTok{# intersect(union(training_index, validation_index), test_index)}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# ## Declarar data entrenamiento}
+\CommentTok{# }
+\CommentTok{# train_data0=effective_train_data[training_index, ]}
+\CommentTok{# val_data0=effective_train_data[validation_index,]}
+\CommentTok{# test_data0=effective_train_data[test_index, ]}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# ## Area Plot with National Average}
+\CommentTok{# }
+\CommentTok{# all_train_data$in_sample=all_train_data$time_index %in% eval_window[1]:eval_window[2]}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{# library(ggplot2)}
+\CommentTok{# }
+\CommentTok{# setwd(root_wd);setwd("imgs")}
+\CommentTok{# }
+\CommentTok{# png(file="sample plot.png")}
+\CommentTok{# ggplot(all_train_data, aes(x =time_index , y = time_index))+}
+\CommentTok{# }
+\CommentTok{#   ggtitle("")+}
+\CommentTok{#   ylab("")+}
+\CommentTok{#   xlab("")+}
+\CommentTok{# }
+\CommentTok{#   geom_line(col="firebrick", fill=alpha("firebrick", .3), size = 1)+}
+\CommentTok{#   geom_vline(xintercept = feasible_window , col="black", lty=2)+}
+\CommentTok{#   geom_vline(xintercept = eval_time, col="darkorchid", lty=2)+}
+\CommentTok{# }
+\CommentTok{#   geom_area(aes(x=time_index , y = time_index*in_sample),fill=alpha("darkorchid", .3) )+}
+\CommentTok{# }
+\CommentTok{# }
+\CommentTok{#   theme_light();dev.off()}
+\CommentTok{# }
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{\texorpdfstring{Inicialmente se selecciona un parámetro
+\(\alpha\) que sugiere la cantidad de información que va a ser empleada
+en en todo el ejercicio (entrenamiento, calibración y prueba), expresada
+como proporción del tamaño de la muestra. Posteriormente se identifican
+las observaciones que poseen un margen de por lo menos
+\(\frac{\alpha}{2}*N\) observaciones antes y después de dicha
+observación. La observación de referencia (punteada morada) es
+seleccionada de forma aleatoria de la ventana factible (entre las
+punteadas negras). Alrededor de la observación de referencia, se
+selecciona una ventana efectiva de estimación que contiene exactamente
+un \(\frac{\alpha}{2}*N\) observaciones a cada lado de la referencia .
+De esta forma, la cantidad de información para entrenamiento se reduce a
+\(\alpha*N\) registros que son más similares, ya que están próximos en
+el
+tiempo.}{Inicialmente se selecciona un parámetro \textbackslash{}alpha que sugiere la cantidad de información que va a ser empleada en en todo el ejercicio (entrenamiento, calibración y prueba), expresada como proporción del tamaño de la muestra. Posteriormente se identifican las observaciones que poseen un margen de por lo menos \textbackslash{}frac\{\textbackslash{}alpha\}\{2\}*N observaciones antes y después de dicha observación. La observación de referencia (punteada morada) es seleccionada de forma aleatoria de la ventana factible (entre las punteadas negras). Alrededor de la observación de referencia, se selecciona una ventana efectiva de estimación que contiene exactamente un \textbackslash{}frac\{\textbackslash{}alpha\}\{2\}*N observaciones a cada lado de la referencia . De esta forma, la cantidad de información para entrenamiento se reduce a \textbackslash{}alpha*N registros que son más similares, ya que están próximos en el tiempo.}}\label{inicialmente-se-selecciona-un-parametro-alpha-que-sugiere-la-cantidad-de-informacion-que-va-a-ser-empleada-en-en-todo-el-ejercicio-entrenamiento-calibracion-y-prueba-expresada-como-proporcion-del-tamano-de-la-muestra.-posteriormente-se-identifican-las-observaciones-que-poseen-un-margen-de-por-lo-menos-fracalpha2n-observaciones-antes-y-despues-de-dicha-observacion.-la-observacion-de-referencia-punteada-morada-es-seleccionada-de-forma-aleatoria-de-la-ventana-factible-entre-las-punteadas-negras.-alrededor-de-la-observacion-de-referencia-se-selecciona-una-ventana-efectiva-de-estimacion-que-contiene-exactamente-un-fracalpha2n-observaciones-a-cada-lado-de-la-referencia-.-de-esta-forma-la-cantidad-de-informacion-para-entrenamiento-se-reduce-a-alphan-registros-que-son-mas-similares-ya-que-estan-proximos-en-el-tiempo.}
+
+\paragraph{3.3 Modelling}\label{modelling}
+
+\paragraph{(3.1) Representación}\label{representacion}
+
+\paragraph{En términos de representación del sistema estudiado como
+proceso estadístico, proponemos una implementación del algoritmo de
+Gradient
+Boosting.}\label{en-terminos-de-representacion-del-sistema-estudiado-como-proceso-estadistico-proponemos-una-implementacion-del-algoritmo-de-gradient-boosting.}
+
+\paragraph{Gradient Boosting es una técnica de Machine Learning para
+problemas de regresión y clasificación que genera un modelo predictivo a
+través del ensamblaje de modelos individualmente débiles, típicamente
+árboles de decisión. (2) Este construye el modelo global de forma
+secuencial y se puede generalizar a diferentes funciones de
+pérdida.}\label{gradient-boosting-es-una-tecnica-de-machine-learning-para-problemas-de-regresion-y-clasificacion-que-genera-un-modelo-predictivo-a-traves-del-ensamblaje-de-modelos-individualmente-debiles-tipicamente-arboles-de-decision.-2-este-construye-el-modelo-global-de-forma-secuencial-y-se-puede-generalizar-a-diferentes-funciones-de-perdida.}
+
+\paragraph{(3.2) Estimación}\label{estimacion}
+
+\paragraph{\texorpdfstring{En términos de estimación, podemos
+interpretar el funcionamiento de los algoritmos de boosting como una
+implementación de \emph{descenso de gradiente funcional}. Es decir, el
+algoritmo trata de optimizar una función de costos sobre el conjunto de
+modelos factibles al escoger la función (modelo) que que genera el mayor
+descenso de
+gradiente.}{En términos de estimación, podemos interpretar el funcionamiento de los algoritmos de boosting como una implementación de descenso de gradiente funcional. Es decir, el algoritmo trata de optimizar una función de costos sobre el conjunto de modelos factibles al escoger la función (modelo) que que genera el mayor descenso de gradiente.}}\label{en-terminos-de-estimacion-podemos-interpretar-el-funcionamiento-de-los-algoritmos-de-boosting-como-una-implementacion-de-descenso-de-gradiente-funcional.-es-decir-el-algoritmo-trata-de-optimizar-una-funcion-de-costos-sobre-el-conjunto-de-modelos-factibles-al-escoger-la-funcion-modelo-que-que-genera-el-mayor-descenso-de-gradiente.}
+
+\paragraph{(3.3) Detalles técnicos}\label{detalles-tecnicos}
+
+\paragraph{\texorpdfstring{A continuación, describimos algunos detalles
+técnicos del algoritmo de \textbf{Gradient Boosting} según la
+implementación concreta en la librería \textbf{gbm} de R
+Studio.}{A continuación, describimos algunos detalles técnicos del algoritmo de Gradient Boosting según la implementación concreta en la librería gbm de R Studio.}}\label{a-continuacion-describimos-algunos-detalles-tecnicos-del-algoritmo-de-gradient-boosting-segun-la-implementacion-concreta-en-la-libreria-gbm-de-r-studio.}
+
+\paragraph{\texorpdfstring{En cualquier problema de modelación
+predictiva, deseamos encontrar una función de regresión \(\hat{f}(x)\)
+que minimiza la expectativa de la función de pérdida
+\(\psi(y, f)\)}{En cualquier problema de modelación predictiva, deseamos encontrar una función de regresión \textbackslash{}hat\{f\}(x) que minimiza la expectativa de la función de pérdida \textbackslash{}psi(y, f)}}\label{en-cualquier-problema-de-modelacion-predictiva-deseamos-encontrar-una-funcion-de-regresion-hatfx-que-minimiza-la-expectativa-de-la-funcion-de-perdida-psiy-f}
+
+\paragraph{La operación de un algoritmo de Gradient Boosting depende de
+los siguientes
+parámetros:}\label{la-operacion-de-un-algoritmo-de-gradient-boosting-depende-de-los-siguientes-parametros}
+
+\begin{itemize}
+\item ~
+  \paragraph{Función de pérdida}\label{funcion-de-perdida}
+\item ~
+  \paragraph{\texorpdfstring{Número de Iteraciones
+  \(T\)}{Número de Iteraciones T}}\label{numero-de-iteraciones-t}
+\item ~
+  \paragraph{\texorpdfstring{Profundidad del árbol individual
+  \(K\)}{Profundidad del árbol individual K}}\label{profundidad-del-arbol-individual-k}
+\item ~
+  \paragraph{\texorpdfstring{Tasa de Aprendizaje
+  \(\lambda\)}{Tasa de Aprendizaje \textbackslash{}lambda}}\label{tasa-de-aprendizaje-lambda}
+\item ~
+  \paragraph{\texorpdfstring{Tasa SubMuestreo.
+  \(p\)}{Tasa SubMuestreo. p}}\label{tasa-submuestreo.-p}
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{C:/Users/usuario/Desktop/Portafolio de Proyectos/1. Violencia de Género/imgs/3.3.1.png}
+\caption{}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{### (3) Modelling:}
+
+\KeywordTok{library}\NormalTok{(randomForest)}
+
+
+
+\NormalTok{## Definir Grilla de Hiper-Parámetros:}
+
+\NormalTok{## (1) Para la Cantidad de Árboles}
+
+\NormalTok{n_tree=}\KeywordTok{c}\NormalTok{(}\DecValTok{2000}\NormalTok{, }\DecValTok{4000}\NormalTok{, }\DecValTok{6000}\NormalTok{)}
+
+\NormalTok{## (2) Profundidad de La Interacción}
+
+\NormalTok{inter_depth=}\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from=}\DecValTok{1}\NormalTok{, }\DataTypeTok{to=}\DecValTok{11}\NormalTok{, }\DataTypeTok{by=}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{## (3) Tamaño Mínimo del Nodo Terminal}
+
+\NormalTok{node_size=}\KeywordTok{seq}\NormalTok{(}\DataTypeTok{from=}\DecValTok{15}\NormalTok{, }\DataTypeTok{to=}\DecValTok{30}\NormalTok{, }\DataTypeTok{by=}\DecValTok{2}\NormalTok{)}
+
+\NormalTok{## Inicializar Tabla de Evaluación de Modelo}
+
+\NormalTok{theta=}\KeywordTok{expand.grid}\NormalTok{(}\StringTok{"inter_depth"}\NormalTok{=inter_depth, }\StringTok{"min_node_size"}\NormalTok{=node_size)}
+
+\NormalTok{theta}\OperatorTok{$}\NormalTok{presicion_si=}\OtherTok{NA}
+\NormalTok{theta}\OperatorTok{$}\NormalTok{presicion_no=}\OtherTok{NA}
+
+\NormalTok{theta}\OperatorTok{$}\NormalTok{recall_si=}\OtherTok{NA}
+\NormalTok{theta}\OperatorTok{$}\NormalTok{recall_no=}\OtherTok{NA}
+
+\NormalTok{## Loop de Calibración del Modelo}
+
+
+\ControlFlowTok{for}\NormalTok{ (t }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(theta))\{}
+  
+\NormalTok{  naive_boosting_fit=gbm}\OperatorTok{::}\KeywordTok{gbm}\NormalTok{(}
+    
+    \DataTypeTok{formula=}\KeywordTok{as.numeric}\NormalTok{(train_lab}\OperatorTok{==}\StringTok{"Sí"}\NormalTok{)}\OperatorTok{~}\NormalTok{. , ## response as function of all covariates,}
+    
+    \DataTypeTok{data=}\NormalTok{train_data0,}
+    
+    \DataTypeTok{distribution=}\StringTok{"bernoulli"}\NormalTok{, }
+    
+\NormalTok{    ## Complexity Parameters}
+    
+    \DataTypeTok{n.trees=} \DecValTok{2000}\NormalTok{, }
+    \DataTypeTok{interaction.depth=}\NormalTok{ theta}\OperatorTok{$}\NormalTok{inter_depth[t],}
+    \DataTypeTok{n.minobsinnode =}\NormalTok{ theta}\OperatorTok{$}\NormalTok{min_node_size[t]}
+\NormalTok{  )}
+  
+  
+  
+  
+\NormalTok{  ### Construyendo Métricas de Desempeño}
+  
+\NormalTok{  tab=}
+\StringTok{    }\KeywordTok{table}\NormalTok{(}\StringTok{"ground_truth"}\NormalTok{=val_data0}\OperatorTok{$}\NormalTok{train_lab, ## Comparar con el conjunto de Evaluación}
+          \StringTok{"predicted"}\NormalTok{=}
+\StringTok{            }\NormalTok{( }\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{predict}\NormalTok{(naive_boosting_fit, val_data0 , }\DataTypeTok{n.trees=}\DecValTok{2000}\NormalTok{,  }\DataTypeTok{type=}\StringTok{"response"}\NormalTok{)}\OperatorTok{>=}\FloatTok{0.5}\NormalTok{, }\StringTok{"Sí_pred"}\NormalTok{, }\StringTok{"No_pred"}\NormalTok{) )}
+\NormalTok{    )}
+  
+  
+\NormalTok{  ### Almacenar el desempeño del Modelo}
+  
+  
+  
+\NormalTok{  ## precision=}
+  
+\NormalTok{  theta}\OperatorTok{$}\NormalTok{presicion_si[t]=}
+\StringTok{    }\NormalTok{tab[}\StringTok{"Sí"}\NormalTok{,}\StringTok{"Sí_pred"}\NormalTok{]}\OperatorTok{/}\NormalTok{(tab[}\StringTok{"Sí"}\NormalTok{,}\StringTok{"Sí_pred"}\NormalTok{]}\OperatorTok{+}\NormalTok{tab[}\StringTok{"No"}\NormalTok{,}\StringTok{"Sí_pred"}\NormalTok{])}
+  
+\NormalTok{  theta}\OperatorTok{$}\NormalTok{presicion_no[t]=}
+\StringTok{    }\NormalTok{tab[}\StringTok{"No"}\NormalTok{,}\StringTok{"No_pred"}\NormalTok{]}\OperatorTok{/}\KeywordTok{sum}\NormalTok{(tab[,}\StringTok{"No_pred"}\NormalTok{])}
+  
+  
+\NormalTok{  ## recall=}
+\NormalTok{  theta}\OperatorTok{$}\NormalTok{recall_si[t]=}
+\StringTok{    }\NormalTok{tab[}\StringTok{"Sí"}\NormalTok{,}\StringTok{"Sí_pred"}\NormalTok{]}\OperatorTok{/}\KeywordTok{sum}\NormalTok{(tab[}\StringTok{"Sí"}\NormalTok{,])}
+  
+\NormalTok{  theta}\OperatorTok{$}\NormalTok{recall_no[t]=}
+\StringTok{    }\NormalTok{tab[}\StringTok{"No"}\NormalTok{,}\StringTok{"No_pred"}\NormalTok{]}\OperatorTok{/}\KeywordTok{sum}\NormalTok{(tab[}\StringTok{"No"}\NormalTok{,])}
+  
+  \KeywordTok{library}\NormalTok{(ggplot2)}
+  
+\NormalTok{  p=}
+\StringTok{    }\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data=}\NormalTok{theta, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{ presicion_si, }\DataTypeTok{x=}\NormalTok{recall_si))}\OperatorTok{+}
+\StringTok{    }
+\StringTok{    }\KeywordTok{ggtitle}\NormalTok{(}\StringTok{"Desempeño de los Modelos: Precisión vs Recall"}\NormalTok{)}\OperatorTok{+}
+\StringTok{    }
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\DataTypeTok{col=}\KeywordTok{alpha}\NormalTok{(}\StringTok{"darkorchid"}\NormalTok{, .}\DecValTok{3}\NormalTok{), }\DataTypeTok{size=}\DecValTok{5}\NormalTok{, }\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{)}\OperatorTok{+}
+\StringTok{    }\KeywordTok{theme_light}\NormalTok{()}
+  
+  
+  \KeywordTok{setwd}\NormalTok{(root_wd)}
+  \KeywordTok{setwd}\NormalTok{(}\StringTok{"results session"}\NormalTok{)}
+  
+  \KeywordTok{save}\NormalTok{(}\DataTypeTok{list=}\KeywordTok{c}\NormalTok{(}\StringTok{"theta"}\NormalTok{, }\StringTok{"p"}\NormalTok{), }
+       \DataTypeTok{file=}\KeywordTok{sprintf}\NormalTok{(}\StringTok{"% s.RData"}\NormalTok{,}
+\NormalTok{                    stringr}\OperatorTok{::}\KeywordTok{str_replace_all}\NormalTok{(}\KeywordTok{format}\NormalTok{(}\KeywordTok{Sys.time}\NormalTok{(), }\StringTok{"%a %b %d %X %Y"}\NormalTok{), }\DataTypeTok{pattern=}\StringTok{":"}\NormalTok{, }\DataTypeTok{replacement=}\StringTok{"_"}\NormalTok{)))}
+  
+\NormalTok{  ## Reportar Progreso del Algoritmo}
+  
+  \KeywordTok{print}\NormalTok{(}\KeywordTok{sprintf}\NormalTok{(}\StringTok{"Estimado el modelo %s de %s"}\NormalTok{, t, }\KeywordTok{nrow}\NormalTok{(theta)))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\paragraph{4. Client Guided
+Calibration}\label{client-guided-calibration}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-11-1} \end{center}
+
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\toprule
+& inter\_depth & min\_node\_size & presicion\_si & presicion\_no &
+recall\_si & recall\_no\tabularnewline
+\midrule
+\endhead
+1 & 1 & 15 & 55.7973 & 67.7257 & 24.0564 & 89.3188\tabularnewline
+2 & 3 & 15 & 55.6500 & 68.1492 & 26.4716 & 88.1760\tabularnewline
+3 & 5 & 15 & 54.7416 & 68.2026 & 27.3646 & 87.3198\tabularnewline
+5 & 9 & 15 & 51.4656 & 68.3003 & 30.5718 & 83.8412\tabularnewline
+6 & 11 & 15 & 51.0377 & 68.3885 & 31.4929 & 83.0668\tabularnewline
+7 & 1 & 17 & 55.8372 & 67.8098 & 24.5001 & 89.1393\tabularnewline
+8 & 3 & 17 & 54.6391 & 68.2545 & 27.7185 & 87.1026\tabularnewline
+9 & 5 & 17 & 53.3237 & 68.3197 & 29.0609 & 85.7426\tabularnewline
+10 & 7 & 17 & 52.5076 & 68.3544 & 29.9315 & 84.8265\tabularnewline
+11 & 9 & 17 & 51.3696 & 68.1700 & 29.9146 & 84.1277\tabularnewline
+12 & 11 & 17 & 50.7091 & 68.3018 & 31.3300 & 82.9314\tabularnewline
+13 & 1 & 19 & 55.7491 & 67.7578 & 24.2642 & 89.2054\tabularnewline
+14 & 3 & 19 & 54.7752 & 68.2337 & 27.5107 & 87.2694\tabularnewline
+15 & 5 & 19 & 53.1421 & 68.2690 & 28.9261 & 85.7048\tabularnewline
+16 & 7 & 19 & 52.7016 & 68.4006 & 30.0213 & 84.8989\tabularnewline
+17 & 9 & 19 & 51.7004 & 68.2937 & 30.3134 & 84.1277\tabularnewline
+20 & 3 & 21 & 54.3137 & 68.2192 & 27.7578 & 86.9137\tabularnewline
+21 & 5 & 21 & 53.5529 & 68.3485 & 29.0384 & 85.8843\tabularnewline
+22 & 7 & 21 & 52.7598 & 68.3690 & 29.7967 & 85.0469\tabularnewline
+23 & 9 & 21 & 51.7555 & 68.3156 & 30.3864 & 84.1245\tabularnewline
+24 & 11 & 21 & 51.0504 & 68.3729 & 31.3918 & 83.1298\tabularnewline
+25 & 1 & 23 & 55.6121 & 67.7985 & 24.5731 & 89.0071\tabularnewline
+26 & 3 & 23 & 54.7974 & 68.2211 & 27.4264 & 87.3198\tabularnewline
+27 & 5 & 23 & 53.7235 & 68.4275 & 29.3361 & 85.8371\tabularnewline
+28 & 7 & 23 & 52.2450 & 68.2556 & 29.6057 & 84.8328\tabularnewline
+29 & 9 & 23 & 51.7962 & 68.3620 & 30.6111 & 84.0332\tabularnewline
+30 & 11 & 23 & 51.1738 & 68.3432 & 31.0998 & 83.3690\tabularnewline
+31 & 1 & 25 & 55.7560 & 67.8273 & 24.6461 & 89.0386\tabularnewline
+32 & 3 & 25 & 54.8619 & 68.2323 & 27.4433 & 87.3450\tabularnewline
+33 & 5 & 25 & 53.4034 & 68.3915 & 29.3923 & 85.6261\tabularnewline
+34 & 7 & 25 & 52.6249 & 68.3969 & 30.0663 & 84.8297\tabularnewline
+35 & 9 & 25 & 51.8261 & 68.3520 & 30.5268 & 84.0962\tabularnewline
+36 & 11 & 25 & 51.3590 & 68.4497 & 31.5210 & 83.2683\tabularnewline
+37 & 1 & 27 & 55.6232 & 67.8118 & 24.6405 & 88.9819\tabularnewline
+38 & 3 & 27 & 54.8433 & 68.3183 & 27.9207 & 87.1152\tabularnewline
+39 & 5 & 27 & 53.2238 & 68.3153 & 29.1171 & 85.6576\tabularnewline
+40 & 7 & 27 & 52.5486 & 68.3618 & 29.9371 & 84.8486\tabularnewline
+41 & 9 & 27 & 51.7769 & 68.2854 & 30.1955 & 84.2379\tabularnewline
+42 & 11 & 27 & 51.3064 & 68.3859 & 31.2121 & 83.3973\tabularnewline
+43 & 1 & 29 & 55.8005 & 67.7724 & 24.3148 & 89.2054\tabularnewline
+44 & 3 & 29 & 54.9393 & 68.2910 & 27.7073 & 87.2631\tabularnewline
+45 & 5 & 29 & 53.9335 & 68.4087 & 29.0721 & 86.0826\tabularnewline
+46 & 7 & 29 & 52.4988 & 68.2868 & 29.5608 & 85.0091\tabularnewline
+47 & 9 & 29 & 51.7532 & 68.3659 & 30.6729 & 83.9734\tabularnewline
+48 & 11 & 29 & 51.3511 & 68.3480 & 30.9537 & 83.5642\tabularnewline
+\bottomrule
+\end{longtable}
+
+\paragraph{\texorpdfstring{\textbf{5. Influencia de Variables y
+evaluación FINAL
+}}{5. Influencia de Variables y evaluación FINAL }}\label{influencia-de-variables-y-evaluacion-final}
+
+\paragraph{\texorpdfstring{La siguiente medida de importancia de
+variables está justificada en Friedman (2001) . Intuitivamente, la
+medición está asociada a la contribución de la variable en términos de
+poder clasificatorio del modelo, es decir, cuánto contribuye cada
+variable a separar cada una de las clases. El poder clasificatorio de la
+variable se mide en términos de el incremento en la pureza de los grupos
+de predicción antes vs después de utilizar dicha variable. Es decir, se
+estima que una variable contribuye más, en la medida que al generar una
+partición de la muestra \emph{por esa variable}, se generan grupos
+delimitados con resultados definidos (mujeres maltratadas vs no
+maltratadas).}{La siguiente medida de importancia de variables está justificada en  Friedman (2001) . Intuitivamente, la medición está asociada a la contribución de la variable en términos de poder clasificatorio del modelo, es decir, cuánto contribuye cada variable a separar cada una de las clases. El poder clasificatorio de la variable se mide en términos de el incremento en la pureza de los grupos de predicción antes vs después de utilizar dicha variable. Es decir, se estima que una variable contribuye más, en la medida que al generar una partición de la muestra por esa variable, se generan grupos delimitados con resultados definidos (mujeres maltratadas vs no maltratadas).}}\label{la-siguiente-medida-de-importancia-de-variables-esta-justificada-en-friedman-2001-.-intuitivamente-la-medicion-esta-asociada-a-la-contribucion-de-la-variable-en-terminos-de-poder-clasificatorio-del-modelo-es-decir-cuanto-contribuye-cada-variable-a-separar-cada-una-de-las-clases.-el-poder-clasificatorio-de-la-variable-se-mide-en-terminos-de-el-incremento-en-la-pureza-de-los-grupos-de-prediccion-antes-vs-despues-de-utilizar-dicha-variable.-es-decir-se-estima-que-una-variable-contribuye-mas-en-la-medida-que-al-generar-una-particion-de-la-muestra-por-esa-variable-se-generan-grupos-delimitados-con-resultados-definidos-mujeres-maltratadas-vs-no-maltratadas.}
+
+\begin{center}\includegraphics{html5_files/figure-latex/unnamed-chunk-13-1} \end{center}
+
+\paragraph{Para interpretar estos resultados, por favor obsérvese que un
+valor alto en importancia de variables implica que la variable es
+importante para mejorar la clasificación entre mujeres maltratadas/no
+maltratadas. Esto, con independencia de la dirección de la relación: Es
+decir, la variable puede afectar positiva o negativamente la
+probabilidad de maltrato. La dirección de la relación correspondiente se
+puede rescatar por medio de intución e
+interpretación.}\label{para-interpretar-estos-resultados-por-favor-observese-que-un-valor-alto-en-importancia-de-variables-implica-que-la-variable-es-importante-para-mejorar-la-clasificacion-entre-mujeres-maltratadasno-maltratadas.-esto-con-independencia-de-la-direccion-de-la-relacion-es-decir-la-variable-puede-afectar-positiva-o-negativamente-la-probabilidad-de-maltrato.-la-direccion-de-la-relacion-correspondiente-se-puede-rescatar-por-medio-de-intucion-e-interpretacion.}
+
+\paragraph{\texorpdfstring{\textbf{6.
+Referencias}}{6. Referencias}}\label{referencias}
+
+\begin{longtable}[]{@{}l@{}}
+\toprule
+\begin{minipage}[b]{0.97\columnwidth}\raggedright\strut
+References\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.97\columnwidth}\raggedright\strut
+Ridgeway, G. (14 de Enero de 2019). Generalized Boosted Models: A guide
+to the gbm package. Obtenido de
+\url{http://127.0.0.1:21829/library/gbm/doc/gbm.pdf}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.97\columnwidth}\raggedright\strut
+Wikipedia. (s.f.). Feminicidios en el Perú. Obtenido de Wikipedia:
+\url{https://es.wikipedia.org/wiki/Feminicidios_en_Per\%C3\%BA}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.97\columnwidth}\raggedright\strut
+Wikipedia. (s.f.). Gradient Boosting. Obtenido de Wikipedia:
+\url{https://es.wikipedia.org/wiki/Gradient_boosting}\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.97\columnwidth}\raggedright\strut
+Wikipedia. (s.f.). Violencia contra la Mujer. Obtenido de Wikipedia:
+\url{https://es.wikipedia.org/wiki/Violencia_contra_la_mujer\#Per\%C3\%BA}\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+
+\end{document}
